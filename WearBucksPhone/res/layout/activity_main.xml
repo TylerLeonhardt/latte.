@@ -6,14 +6,16 @@
     android:layout_gravity="center"
     android:gravity="center"
     android:orientation="vertical"
+    android:background="#802A2A"
     tools:context="com.wearbucks.app.MainActivity" >
     
     <EditText
         android:id="@+id/username"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="username"
+        android:hint="@string/username"
         android:inputType="textEmailAddress"
+        android:textColor="#FFFFFF"
         
        />
     
@@ -21,9 +23,10 @@
         android:id="@+id/password"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="password"
+        android:hint="@string/password"
         android:layout_marginTop="20dp"
         android:inputType="textPassword"
+        android:textColor="#FFFFFF"
         
        />
     
@@ -31,9 +34,10 @@
         android:id="@+id/cardNumber"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="#### #### #### ####"
+        android:hint="@string/cardnumber"
         android:layout_marginTop="20dp"
         android:inputType="number"
+        android:textColor="#FFFFFF"
         
        />
     
@@ -50,7 +54,8 @@
         android:id="@+id/barcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/barcode"
         
         />
     
@@ -59,6 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:textColor="#FFFFFF"
         
         />
 

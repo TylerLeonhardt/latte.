@@ -10,18 +10,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -33,32 +28,32 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-	public TextView response;
-	public Button request;
+	//form
 	public EditText username, password, cardNumber;
+	public Button request;
 	
+	//URLs to fetch from
 	public String API;
 	public String APIimage;
+	
+	//The data fetched
 	public ImageView imageResponse;
+	public TextView response;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        //FIND ALL THE VIEWS
         response = (TextView) findViewById(R.id.response);
-
         request = (Button) findViewById(R.id.request);
-        
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
         cardNumber = (EditText) findViewById(R.id.cardNumber);
         imageResponse = (ImageView) findViewById(R.id.barcode);
-        
-        //defaults
-        API = "http://emeraldsiren.com/USERNAME/PASSWORD/glance";
-        APIimage = "http://www.voindo.eu/UltimateBarcodeGenerator/barcode/barcode.processor.php?encode=CODE39&qrdata_type=text&qr_btext_text=&qr_link_link=&qr_sms_phone=&qr_sms_msg=&qr_phone_phone=&qr_vc_N=&qr_vc_C=&qr_vc_J=&qr_vc_W=&qr_vc_H=&qr_vc_AA=&qr_vc_ACI=&qr_vc_AP=&qr_vc_ACO=&qr_vc_E=&qr_vc_U=&qr_mec_N=&qr_mec_P=&qr_mec_E=&qr_mec_U=&qr_email_add=&qr_email_sub=&qr_email_msg=&qr_wifi_ssid=&qr_wifi_type=wep&qr_wifi_pass=&qr_geo_lat=&qr_geo_lon=&bdata_matrix=123&bdata_pdf=123&bdata=9999999999999999&height=150&scale=1&bgcolor=%23ffffff&color=%23000000&file=&type=jpg&folder=";
-        
+                
+        //Request Listener
         request.setOnClickListener( new OnClickListener() {
 
             @Override
@@ -67,40 +62,64 @@ public class MainActivity extends ActionBarActivity {
             	InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); 
             	inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             	
-            	//build API
-            	String CN = cardNumber.getText().toString().replaceAll("[^0-9]", "");
-            	
-            	API = "http://emeraldsiren.com/" + username.getText().toString() + "/" + password.getText().toString() + "/glance";
-            	APIimage = "http://www.voindo.eu/UltimateBarcodeGenerator/barcode/barcode.processor.php?encode=CODE39&qrdata_type=text&qr_btext_text=&qr_link_link=&qr_sms_phone=&qr_sms_msg=&qr_phone_phone=&qr_vc_N=&qr_vc_C=&qr_vc_J=&qr_vc_W=&qr_vc_H=&qr_vc_AA=&qr_vc_ACI=&qr_vc_AP=&qr_vc_ACO=&qr_vc_E=&qr_vc_U=&qr_mec_N=&qr_mec_P=&qr_mec_E=&qr_mec_U=&qr_email_add=&qr_email_sub=&qr_email_msg=&qr_wifi_ssid=&qr_wifi_type=wep&qr_wifi_pass=&qr_geo_lat=&qr_geo_lon=&bdata_matrix=123&bdata_pdf=123&bdata=" + CN + "&height=100&scale=2&bgcolor=%23ffffff&color=%23000000&file=&type=jpg&folder=";
-            	
-            	Toast.makeText(getBaseContext(), "Updating...", Toast.LENGTH_LONG).show();
-            	
-            	//call AsynTask to perform network operation on separate thread
-             	new HttpAsyncTask().execute(API);
-             	new HttpImageAsyncTask().execute(APIimage);
+            	//fetches the data and pushes it to the view
+            	//One param: boolean whether the username and password fields are filled in
+            	fetch(validateCredentials());
             }
         });
     }
-   
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    
+    //checks if the username editfield and the the password editfield have text values
+    //returns false if it doesnt true otherwise
+    public boolean validateCredentials(){
+    	if(username.getText().toString().equals("") || password.getText().toString().equals(""))
+    		return false; 
+    	return true;
     }
     
+    //if the edit texts are empty it will do nothing and Toast "Invalid Login..."
+    //else it will Toast updating..., fetch the data, and push it to the view
+    public void fetch(boolean validated){
+    	if(!validated){ 
+    		
+    		Toast.makeText(getBaseContext(), "Invalid Login...", Toast.LENGTH_SHORT).show(); 
+    		
+    	}
+    	else{
+        	//build API
+        	String CN = cardNumber.getText().toString().replaceAll("[^0-9]", "");
+        	
+        	API = "http://emeraldsiren.com/" + username.getText().toString() + "/" + password.getText().toString() + "/glance";
+        	APIimage = "http://www.voindo.eu/UltimateBarcodeGenerator/barcode/barcode.processor.php?encode=CODE39&qrdata_type=text&qr_btext_text=&qr_link_link=&qr_sms_phone=&qr_sms_msg=&qr_phone_phone=&qr_vc_N=&qr_vc_C=&qr_vc_J=&qr_vc_W=&qr_vc_H=&qr_vc_AA=&qr_vc_ACI=&qr_vc_AP=&qr_vc_ACO=&qr_vc_E=&qr_vc_U=&qr_mec_N=&qr_mec_P=&qr_mec_E=&qr_mec_U=&qr_email_add=&qr_email_sub=&qr_email_msg=&qr_wifi_ssid=&qr_wifi_type=wep&qr_wifi_pass=&qr_geo_lat=&qr_geo_lon=&bdata_matrix=123&bdata_pdf=123&bdata=" + CN + "&height=100&scale=2&bgcolor=%23ffffff&color=%23000000&file=&type=jpg&folder=";
+        	
+        	Toast.makeText(getBaseContext(), "Updating...", Toast.LENGTH_LONG).show();
+        	
+        	//call AsynTask to perform network operation on separate thread
+        	new HttpImageAsyncTask().execute(APIimage);
+        	new HttpAsyncTask().execute(API);
+    	}
+    }
+   
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+    
+    //HTTP GET FOR BARCODE
     public static Bitmap GETImage(String url){
 		InputStream inputStream = null;
 		Bitmap result = null;
@@ -128,6 +147,7 @@ public class MainActivity extends ActionBarActivity {
 		return result;
 	}
 
+    //ASYNC TASK FOR BARCODE
     private class HttpImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
         @Override
         protected Bitmap doInBackground(String... urls) {
@@ -140,6 +160,7 @@ public class MainActivity extends ActionBarActivity {
        }
     }
     
+    //HTTP GET FOR TEXT
     public static String GET(String url){
 		InputStream inputStream = null;
 		String result = "";
@@ -167,6 +188,7 @@ public class MainActivity extends ActionBarActivity {
 		return result;
 	}
 
+    //CONVERTS INPUT STREAM TO STRING
     private static String convertInputStreamToString(InputStream inputStream) throws IOException{
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
         String line = "";
@@ -178,15 +200,8 @@ public class MainActivity extends ActionBarActivity {
         return result;
 
     }
-
-    public boolean isConnected(){
-    	ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Activity.CONNECTIVITY_SERVICE);
-    	    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-    	    if (networkInfo != null && networkInfo.isConnected()) 
-    	    	return true;
-    	    else
-    	    	return false;	
-    }
+    
+    //ASYNC TASK FOR TEXT
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
