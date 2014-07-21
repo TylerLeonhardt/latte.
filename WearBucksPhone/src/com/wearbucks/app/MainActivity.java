@@ -11,6 +11,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -19,6 +21,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,8 @@ public class MainActivity extends ActionBarActivity {
 
 	public TextView response;
 	public String API;
+	public String APIimage;
+	public ImageView imageResponse;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +38,12 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         
         response = (TextView) findViewById(R.id.response);
+        imageResponse = (ImageView) findViewById(R.id.barcode);
         API = "http://emeraldsiren.com/USERNAME/PASSWORD/glance";
-        
+        APIimage = "http://www.voindo.eu/UltimateBarcodeGenerator/barcode/barcode.processor.php?encode=CODE39&qrdata_type=text&qr_btext_text=&qr_link_link=&qr_sms_phone=&qr_sms_msg=&qr_phone_phone=&qr_vc_N=&qr_vc_C=&qr_vc_J=&qr_vc_W=&qr_vc_H=&qr_vc_AA=&qr_vc_ACI=&qr_vc_AP=&qr_vc_ACO=&qr_vc_E=&qr_vc_U=&qr_mec_N=&qr_mec_P=&qr_mec_E=&qr_mec_U=&qr_email_add=&qr_email_sub=&qr_email_msg=&qr_wifi_ssid=&qr_wifi_type=wep&qr_wifi_pass=&qr_geo_lat=&qr_geo_lon=&bdata_matrix=123&bdata_pdf=123&bdata=9999999999999999&height=50&scale=2&bgcolor=%23ffffff&color=%23000000&file=&type=jpg&folder=";
         //call AsynTask to perform network operation on separate thread
      	new HttpAsyncTask().execute(API);
+     	new HttpImageAsyncTask().execute(APIimage);
     }
    
 
@@ -57,6 +64,47 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    public static Bitmap GETImage(String url){
+		InputStream inputStream = null;
+		Bitmap result = null;
+		try {
+
+			// create HttpClient
+			HttpClient httpclient = new DefaultHttpClient();
+
+			// make GET request to the given URL
+			HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
+
+			// receive response as inputStream
+			inputStream = httpResponse.getEntity().getContent();
+
+			// convert inputstream to string
+			if(inputStream != null)
+				result = BitmapFactory.decodeStream(inputStream);
+			else
+				result = null;
+
+		} catch (Exception e) {
+			Log.d("InputStream", e.getLocalizedMessage());
+		}
+
+		return result;
+	}
+
+    private class HttpImageAsyncTask extends AsyncTask<String, Void, Bitmap> {
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+
+            return GETImage(urls[0]);
+        }
+        // onPostExecute displays the results of the AsyncTask.
+        protected void onPostExecute(Bitmap result) {
+        	Toast.makeText(getBaseContext(), "Received!", Toast.LENGTH_LONG).show();
+        	imageResponse.setImageBitmap(result);
+
+       }
     }
     
     public static String GET(String url){
