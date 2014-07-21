@@ -38,7 +38,7 @@ public class MainActivity extends ActionBarActivity {
         //call AsynTask to perform network operation on separate thread
      	new HttpAsyncTask().execute(API);
     }
-
+   
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
