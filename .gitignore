@@ -7,6 +7,7 @@
 
 # Java class files
 *.class
+WearBucks/.classpath
 
 # Generated files
 bin/
