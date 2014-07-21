@@ -4,5 +4,6 @@
     <string name="app_name">WearBucks Settings</string>
     <string name="initial">Updating&#8230;</string>
     <string name="action_settings">Settings</string>
+    <string name="request">Request</string>
 
 </resources>

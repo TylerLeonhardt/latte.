@@ -19,12 +19,19 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
 	public TextView response;
+	public Button request;
+	public EditText username, password, cardNumber;
+	
 	public String API;
 	
     @Override
@@ -33,13 +40,27 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         
         response = (TextView) findViewById(R.id.response);
+        request = (Button) findViewById(R.id.request);
+        
+        username = (EditText) findViewById(R.id.username);
+        password = (EditText) findViewById(R.id.password);
+        cardNumber = (EditText) findViewById(R.id.cardNumber);
+        
+        //defaults
         API = "http://emeraldsiren.com/USERNAME/PASSWORD/glance";
         
-        //call AsynTask to perform network operation on separate thread
-     	new HttpAsyncTask().execute(API);
+        request.setOnClickListener( new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+            	//build API
+            	API = "http://emeraldsiren.com/" + username.getText().toString() + "/" + password.getText().toString() + "/glance";
+            	//call AsynTask to perform network operation on separate thread
+             	new HttpAsyncTask().execute(API);
+            }
+        });
     }
-
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

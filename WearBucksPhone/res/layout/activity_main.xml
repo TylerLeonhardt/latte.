@@ -14,4 +14,46 @@
         android:layout_height="wrap_content"
         android:text="@string/initial" />
 
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/response"
+        android:layout_below="@+id/response"
+        android:layout_marginTop="36dp"
+        android:ems="10"
+        android:inputType="textEmailAddress" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/request"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="34dp"
+        android:text="@string/request" />
+
+    <EditText
+        android:id="@+id/cardNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/request"
+        android:layout_alignLeft="@+id/username"
+        android:layout_marginBottom="94dp"
+        android:ems="10"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cardNumber"
+        android:layout_alignLeft="@+id/cardNumber"
+        android:layout_marginBottom="38dp"
+        android:ems="10"
+        android:inputType="textPassword" />
+
 </RelativeLayout>
