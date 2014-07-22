@@ -2,12 +2,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="60dp"
+    android:paddingRight="60dp"
+    android:paddingBottom="60dp"
+    android:paddingLeft="60dp"
     android:layout_gravity="center"
     android:gravity="center"
     android:orientation="vertical"
     android:background="#802A2A"
     tools:context="com.wearbucks.app.MainActivity" >
+    
+    <ImageView 
+        android:id="@+id/wearbucks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:contentDescription="@string/wearbucks"
+        android:src="@drawable/wearbucks"
+        
+        />
     
     <EditText
         android:id="@+id/username"
@@ -47,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/request"
+        android:textColor="#FFFFFF"
         
         />
     

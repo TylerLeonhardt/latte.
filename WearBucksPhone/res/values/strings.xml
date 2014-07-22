@@ -9,5 +9,6 @@
     <string name="password">password</string>
     <string name="cardnumber">#### #### #### ####</string>
     <string name="barcode">barcode</string>
+    <string name="wearbucks">wearbucks</string>
 
 </resources>
