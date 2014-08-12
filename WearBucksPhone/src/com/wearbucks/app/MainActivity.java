@@ -50,7 +50,9 @@ public class MainActivity extends ActionBarActivity {
 	public ImageView imageResponse;
 	public TextView response;
 	
-	public boolean responseDone;
+	//Notification ID
+	public static final int NOTIFICATION_ID = 99;
+	
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +75,6 @@ public class MainActivity extends ActionBarActivity {
             	//close keyboard
             	InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); 
             	inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-            	
-            	//no response yet
-            	responseDone = false;
             	
             	//fetches the data and pushes it to the view
             	//One param: boolean whether the username and password fields are filled in
@@ -282,6 +281,6 @@ public class MainActivity extends ActionBarActivity {
     	
     	//build and send notification
     	NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-    	notificationManager.notify(99, mBuilder.build());
+    	notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 }
