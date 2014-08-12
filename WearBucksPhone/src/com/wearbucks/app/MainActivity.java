@@ -10,11 +10,19 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
@@ -40,6 +48,8 @@ public class MainActivity extends ActionBarActivity {
 	public ImageView imageResponse;
 	public TextView response;
 	
+	public boolean responseDone;
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +71,9 @@ public class MainActivity extends ActionBarActivity {
             	//close keyboard
             	InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); 
             	inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            	
+            	//no response yet
+            	responseDone = false;
             	
             	//fetches the data and pushes it to the view
             	//One param: boolean whether the username and password fields are filled in
@@ -98,6 +111,19 @@ public class MainActivity extends ActionBarActivity {
         	new HttpImageAsyncTask().execute(APIimage);
         	new HttpAsyncTask().execute(API);
     	}
+    }
+    
+    public Bitmap drawableToBitmap (Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable)drawable).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap); 
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
    
 //    @Override
@@ -212,6 +238,27 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(String result) {
         	response.setText(result);
+        	
+        	//create new notification
+        	sendNotification();
        }
+    }
+    
+    private void sendNotification(){
+    	//create new notification
+    	final Intent emptyIntent = new Intent();
+    	PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    			
+    	NotificationCompat.Builder mBuilder =
+    		    new NotificationCompat.Builder(this)
+    		    .setSmallIcon(R.drawable.wearbucks_logo)
+    		    .setContentTitle("WearBucks")
+    		    .setContentText(response.getText().toString())
+    		    .setContentIntent(pendingIntent)
+    		    //.setLargeIcon(drawableToBitmap(imageResponse.getDrawable()))
+    		    ;
+    	
+    	NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    	notificationManager.notify(99, mBuilder.build());
     }
 }
