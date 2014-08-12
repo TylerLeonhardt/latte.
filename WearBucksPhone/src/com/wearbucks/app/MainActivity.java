@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -77,7 +79,15 @@ public class MainActivity extends ActionBarActivity {
             	
             	//fetches the data and pushes it to the view
             	//One param: boolean whether the username and password fields are filled in
-            	fetch(validateCredentials());
+            	try {
+					fetch(validateCredentials());
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
     }
@@ -92,7 +102,7 @@ public class MainActivity extends ActionBarActivity {
     
     //if the edit texts are empty it will do nothing and Toast "Invalid Login..."
     //else it will Toast updating..., fetch the data, and push it to the view
-    public void fetch(boolean validated){
+    public void fetch(boolean validated) throws ClientProtocolException, IOException{
     	if(!validated){ 
     		
     		Toast.makeText(getBaseContext(), "Invalid Login...", Toast.LENGTH_SHORT).show(); 
@@ -103,7 +113,9 @@ public class MainActivity extends ActionBarActivity {
         	String CN = cardNumber.getText().toString().replaceAll("[^0-9]", "");
         	
         	API = "http://emeraldsiren.com/" + username.getText().toString() + "/" + password.getText().toString() + "/glance";
-        	APIimage = "http://www.voindo.eu/UltimateBarcodeGenerator/barcode/barcode.processor.php?encode=CODE39&qrdata_type=text&qr_btext_text=&qr_link_link=&qr_sms_phone=&qr_sms_msg=&qr_phone_phone=&qr_vc_N=&qr_vc_C=&qr_vc_J=&qr_vc_W=&qr_vc_H=&qr_vc_AA=&qr_vc_ACI=&qr_vc_AP=&qr_vc_ACO=&qr_vc_E=&qr_vc_U=&qr_mec_N=&qr_mec_P=&qr_mec_E=&qr_mec_U=&qr_email_add=&qr_email_sub=&qr_email_msg=&qr_wifi_ssid=&qr_wifi_type=wep&qr_wifi_pass=&qr_geo_lat=&qr_geo_lon=&bdata_matrix=123&bdata_pdf=123&bdata=" + CN + "&height=100&scale=2&bgcolor=%23ffffff&color=%23000000&file=&type=jpg&folder=";
+        	APIimage = "http://www.voindo.eu/UltimateBarcodeGenerator/barcode/barcode.processor.php?encode=CODE39&qrdata_type=text&qr_btext_text=&qr_link_link=&qr_sms_phone=&qr_sms_msg=&qr_phone_phone=&qr_vc_N=&qr_vc_C=&qr_vc_J=&qr_vc_W=&qr_vc_H=&qr_vc_AA=&qr_vc_ACI=&qr_vc_AP=&qr_vc_ACO=&qr_vc_E=&qr_vc_U=&qr_mec_N=&qr_mec_P=&qr_mec_E=&qr_mec_U=&qr_email_add=&qr_email_sub=&qr_email_msg=&qr_wifi_ssid=&qr_wifi_type=wep&qr_wifi_pass=&qr_geo_lat=&qr_geo_lon=&bdata_matrix=123&bdata_pdf=123&bdata=" + CN + "&height=245&scale=&bgcolor=%23ffffff&color=%23000000&file=&type=jpg&folder=";
+        	
+        	System.err.println("=== " + API);
         	
         	Toast.makeText(getBaseContext(), "Updating...", Toast.LENGTH_LONG).show();
         	
@@ -249,15 +261,25 @@ public class MainActivity extends ActionBarActivity {
     	final Intent emptyIntent = new Intent();
     	PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     			
+    	//expanded barcode image notification
+    	NotificationCompat.BigPictureStyle notiStyle = new 
+    	        NotificationCompat.BigPictureStyle();
+    	
+    	notiStyle.setBigContentTitle("WearBucks");
+    	notiStyle.setSummaryText("Barcode for card ending in " + cardNumber.getText().toString().substring(cardNumber.getText().toString().length()-4));
+    	notiStyle.bigPicture( ((BitmapDrawable) imageResponse.getDrawable()).getBitmap() );
+    	
+    	//compact notification showing stats
     	NotificationCompat.Builder mBuilder =
     		    new NotificationCompat.Builder(this)
     		    .setSmallIcon(R.drawable.wearbucks_logo)
     		    .setContentTitle("WearBucks")
     		    .setContentText(response.getText().toString())
     		    .setContentIntent(pendingIntent)
-    		    //.setLargeIcon(drawableToBitmap(imageResponse.getDrawable()))
+    		    .setStyle(notiStyle)
     		    ;
     	
+    	//build and send notification
     	NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     	notificationManager.notify(99, mBuilder.build());
     }
