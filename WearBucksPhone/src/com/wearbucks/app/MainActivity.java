@@ -277,6 +277,7 @@ public class MainActivity extends ActionBarActivity {
     		    .setContentText(response.getText().toString())
     		    .setContentIntent(pendingIntent)
     		    .setStyle(notiStyle)
+    		    .setOngoing(true)
     		    ;
     	
     	//build and send notification
