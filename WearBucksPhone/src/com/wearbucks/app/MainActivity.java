@@ -288,7 +288,7 @@ public class MainActivity extends ActionBarActivity {
     		    new NotificationCompat.Builder(this)
     		    .setSmallIcon(R.drawable.wearbucks_logo)
     		    .setContentTitle("WearBucks")
-    		    .setContentText(response.getText().toString())
+    		    .setContentText(response.getText().toString() + "\n" + "card (" + cardNumber.getText().toString().substring(cardNumber.getText().toString().length()-4) + ")")
     		    .setContentIntent(pendingIntent)
     		    .setStyle(notiStyle)
     		    //.setOngoing(true)
