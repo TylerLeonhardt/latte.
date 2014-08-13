@@ -60,8 +60,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         
         //clear notification
-        //NotificationManager notiManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-    	//notiManager.cancel(NOTIFICATION_ID);
+        NotificationManager notiManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    	notiManager.cancel(NOTIFICATION_ID);
         
         //FIND ALL THE VIEWS
         response = (TextView) findViewById(R.id.response);
@@ -281,7 +281,7 @@ public class MainActivity extends ActionBarActivity {
     	
     	//////
     	PendingIntent dismissPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
-				HandleNotificationActivity.class), 0);
+				MainActivity.class), 0);
     	
     	//compact notification showing stats
     	NotificationCompat.Builder mBuilder =
@@ -291,9 +291,8 @@ public class MainActivity extends ActionBarActivity {
     		    .setContentText(response.getText().toString())
     		    .setContentIntent(pendingIntent)
     		    .setStyle(notiStyle)
-    		    .setOngoing(true)
+    		    //.setOngoing(true)
     		    .addAction(R.drawable.wearbucks_logo, "dismiss", dismissPendingIntent)
-    		    .setAutoCancel(true)
     		    ;
     	
     	//build and send notification
