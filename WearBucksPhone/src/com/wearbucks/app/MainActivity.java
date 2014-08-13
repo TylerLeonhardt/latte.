@@ -11,7 +11,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.app.Notification;
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -58,6 +58,10 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        //clear notification
+        //NotificationManager notiManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    	//notiManager.cancel(NOTIFICATION_ID);
         
         //FIND ALL THE VIEWS
         response = (TextView) findViewById(R.id.response);
@@ -255,11 +259,15 @@ public class MainActivity extends ActionBarActivity {
        }
     }
     
-    private void sendNotification(){
-    	//create new notification
+    @SuppressLint("NewApi") private void sendNotification(){
+    	//create intents
     	final Intent emptyIntent = new Intent();
     	PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     			
+    	//create big notification action
+    	//Intent dismissIntent = new Intent(this, );
+    	
+    	
     	//expanded barcode image notification
     	NotificationCompat.BigPictureStyle notiStyle = new 
     	        NotificationCompat.BigPictureStyle();
@@ -267,6 +275,13 @@ public class MainActivity extends ActionBarActivity {
     	notiStyle.setBigContentTitle("WearBucks");
     	notiStyle.setSummaryText("Barcode for card ending in " + cardNumber.getText().toString().substring(cardNumber.getText().toString().length()-4));
     	notiStyle.bigPicture( ((BitmapDrawable) imageResponse.getDrawable()).getBitmap() );
+    	
+    	NotificationManager notiManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    	notiManager.cancel(NOTIFICATION_ID);
+    	
+    	//////
+    	PendingIntent dismissPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this,
+				HandleNotificationActivity.class), 0);
     	
     	//compact notification showing stats
     	NotificationCompat.Builder mBuilder =
@@ -277,10 +292,11 @@ public class MainActivity extends ActionBarActivity {
     		    .setContentIntent(pendingIntent)
     		    .setStyle(notiStyle)
     		    .setOngoing(true)
+    		    .addAction(R.drawable.wearbucks_logo, "dismiss", dismissPendingIntent)
+    		    .setAutoCancel(true)
     		    ;
     	
     	//build and send notification
-    	NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-    	notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+    	notiManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 }
