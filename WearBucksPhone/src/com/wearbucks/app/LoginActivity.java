@@ -5,15 +5,11 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
 
-public class HandleNotificationActivity extends Activity {
+public class LoginActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		NotificationManager notiManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-    	notiManager.cancel(MainActivity.NOTIFICATION_ID);
-    	
-    	finish();
+		setContentView(R.layout.activity_login);
 	}
 }

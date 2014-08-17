@@ -12,21 +12,25 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -39,8 +43,8 @@ import android.widget.Toast;
 public class MainActivity extends ActionBarActivity {
 
 	//form
-	public EditText username, password, cardNumber;
-	public Button request;
+	public EditText cardNumber;
+	public Button addNewCard;
 	
 	//URLs to fetch from
 	public String API;
@@ -53,11 +57,25 @@ public class MainActivity extends ActionBarActivity {
 	//Notification ID
 	public static final int NOTIFICATION_ID = 99;
 	
+	//stored preferences
+	public static final String USERNAME = "USERNAME";
+	public static final String PASSWORD = "PASSWORD";
+	public String username, password;
+	
+	//Storing data
+	SharedPreferences pref;
+	Editor editor;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        //Storing data
+    	pref = getApplicationContext().getSharedPreferences("WearBucksPref", 0);
+    	editor = pref.edit();
+    	
+    	pref.edit().clear().commit();	//testing only; remove
         
         //clear notification
         NotificationManager notiManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -65,14 +83,19 @@ public class MainActivity extends ActionBarActivity {
         
         //FIND ALL THE VIEWS
         response = (TextView) findViewById(R.id.response);
-        request = (Button) findViewById(R.id.request);
-        username = (EditText) findViewById(R.id.username);
-        password = (EditText) findViewById(R.id.password);
+        addNewCard = (Button) findViewById(R.id.addNewCard);
         cardNumber = (EditText) findViewById(R.id.cardNumber);
         imageResponse = (ImageView) findViewById(R.id.barcode);
                 
+        
+        //check if logged in
+        if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {
+        	System.err.println("nothing saved yet");
+        	getCreds();
+        }
+        
         //Request Listener
-        request.setOnClickListener( new OnClickListener() {
+        addNewCard.setOnClickListener( new OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -91,14 +114,101 @@ public class MainActivity extends ActionBarActivity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+            	
+            	addCard();
             }
         });
+    }
+    
+    private void addCard(){
+    	//show dialog
+    	// get prompts.xml view
+    			LayoutInflater li = LayoutInflater.from(this);
+    			View promptsView = li.inflate(R.layout.activity_addcard, null);
+
+    			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+    					this);
+
+    			// set prompts.xml to alertdialog builder
+    			alertDialogBuilder.setView(promptsView);
+
+    			final EditText un = (EditText) promptsView.findViewById(R.id.usernameInput);
+    			final EditText pass = (EditText) promptsView.findViewById(R.id.passwordInput);
+
+    			// set dialog message
+    			alertDialogBuilder
+    				.setCancelable(false)
+    				.setPositiveButton("Save Card",
+    				  new DialogInterface.OnClickListener() {
+    				    public void onClick(DialogInterface dialog,int id) {
+    					//get user input for card number
+    				    //valid card number
+    				    //add it to the SharedPreference list
+    				    }
+    				  })
+    				.setNegativeButton("Cancel",
+    				  new DialogInterface.OnClickListener() {
+    				    public void onClick(DialogInterface dialog,int id) {
+    					dialog.cancel();
+    				    }
+    				  });
+
+    			// create alert dialog
+    			AlertDialog alertDialog = alertDialogBuilder.create();
+
+    			// show it
+    			alertDialog.show();
+    }
+    
+    private void getCreds(){
+    	// get prompts.xml view
+		LayoutInflater li = LayoutInflater.from(this);
+		View promptsView = li.inflate(R.layout.activity_login, null);
+
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				this);
+
+		// set prompts.xml to alertdialog builder
+		alertDialogBuilder.setView(promptsView);
+
+		final EditText un = (EditText) promptsView.findViewById(R.id.usernameInput);
+		final EditText pass = (EditText) promptsView.findViewById(R.id.passwordInput);
+
+		// set dialog message
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Log In",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+				// get user input and set it to result
+				// edit text
+				//result.setText(userInput.getText());
+			    editor.putString(USERNAME, un.getText().toString());
+			    editor.putString(PASSWORD, pass.getText().toString());
+			    editor.commit();
+			    
+			    username = pref.getString(USERNAME, null);
+		        password = pref.getString(PASSWORD, null);
+			    }
+			  })
+			/*.setNegativeButton("Cancel",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			    }
+			  })*/;
+
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
+
+		// show it
+		alertDialog.show();
     }
     
     //checks if the username editfield and the the password editfield have text values
     //returns false if it doesnt true otherwise
     public boolean validateCredentials(){
-    	if(username.getText().toString().equals("") || password.getText().toString().equals(""))
+    	if(username.equals("") || password.equals(""))
     		return false; 
     	return true;
     }
@@ -115,7 +225,7 @@ public class MainActivity extends ActionBarActivity {
         	//build API
         	String CN = cardNumber.getText().toString().replaceAll("[^0-9]", "");
         	
-        	API = "http://emeraldsiren.com/" + username.getText().toString() + "/" + password.getText().toString() + "/glance";
+        	API = "http://emeraldsiren.com/" + username + "/" + password + "/glance";
         	//APIimage = "http://www.voindo.eu/UltimateBarcodeGenerator/barcode/barcode.processor.php?encode=QRCODE&qrdata_type=text&qr_btext_text=&qr_link_link=&qr_sms_phone=&qr_sms_msg=&qr_phone_phone=&qr_vc_N=&qr_vc_C=&qr_vc_J=&qr_vc_W=&qr_vc_H=&qr_vc_AA=&qr_vc_ACI=&qr_vc_AP=&qr_vc_ACO=&qr_vc_E=&qr_vc_U=&qr_mec_N=&qr_mec_P=&qr_mec_E=&qr_mec_U=&qr_email_add=&qr_email_sub=&qr_email_msg=&qr_wifi_ssid=&qr_wifi_type=wep&qr_wifi_pass=&qr_geo_lat=&qr_geo_lon=&bdata_matrix=123&bdata_pdf=123&bdata=" + CN + "&height=245&scale=&bgcolor=%23ffffff&color=%23000000&file=&type=jpg&folder=";
         	APIimage = "http://www.voindo.eu/UltimateBarcodeGenerator/barcode/barcode.processor.php?encode=QRCODE&qrdata_type=text&qr_btext_text=" + CN + "&qr_link_link=&qr_sms_phone=&qr_sms_msg=&qr_phone_phone=&qr_vc_N=&qr_vc_C=&qr_vc_J=&qr_vc_W=&qr_vc_H=&qr_vc_AA=&qr_vc_ACI=&qr_vc_AP=&qr_vc_ACO=&qr_vc_E=&qr_vc_U=&qr_mec_N=&qr_mec_P=&qr_mec_E=&qr_mec_U=&qr_email_add=&qr_email_sub=&qr_email_msg=&qr_wifi_ssid=&qr_wifi_type=wep&qr_wifi_pass=&qr_geo_lat=&qr_geo_lon=&bdata_matrix=123&bdata_pdf=123&bdata=123&height=500&scale=1&bgcolor=%23ffffff&color=%23000000&file=&folder=";
         	System.err.println("=== " + API);
@@ -127,38 +237,69 @@ public class MainActivity extends ActionBarActivity {
         	new HttpAsyncTask().execute(API);
     	}
     }
-    
-    public Bitmap drawableToBitmap (Drawable drawable) {
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable)drawable).getBitmap();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap); 
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
-    }
    
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //Show which account the user is logged into and allow them the log out
+        int id = item.getItemId();
+        if (id == R.id.action_myaccount) {
+        	
+        	// get prompts.xml view
+    		LayoutInflater li = LayoutInflater.from(this);
+    		View promptsView = li.inflate(R.layout.activity_myaccount, null);
+
+    		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+    				this);
+
+    		// set prompts.xml to alertdialog builder
+    		alertDialogBuilder.setView(promptsView);
+
+    		final TextView details = (TextView) promptsView.findViewById(R.id.myAccountDetails);
+    		details.setText("Logged in as: " + username + " (password: " + password + ")");
+
+    		// set dialog message
+    		alertDialogBuilder
+    			.setCancelable(false)
+    			.setPositiveButton("Log Out",
+    			  new DialogInterface.OnClickListener() {
+    			    public void onClick(DialogInterface dialog,int id) {
+    				// get user input and set it to result
+    				// edit text
+    				//result.setText(userInput.getText());
+    			    editor.putString(USERNAME, null);
+    			    editor.putString(PASSWORD, null);
+    			    editor.commit();
+    			    
+    			    getCreds();
+    			    
+    			    username = pref.getString(USERNAME, null);
+    		        password = pref.getString(PASSWORD, null);
+    			    }
+    			  })
+    			.setNegativeButton("Close",
+    			  new DialogInterface.OnClickListener() {
+    			    public void onClick(DialogInterface dialog,int id) {
+    				dialog.cancel();
+    			    }
+    			  });
+
+    		// create alert dialog
+    		AlertDialog alertDialog = alertDialogBuilder.create();
+
+    		// show it
+    		alertDialog.show();
+        	
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     
     //HTTP GET FOR BARCODE
     public static Bitmap GETImage(String url){

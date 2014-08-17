@@ -22,27 +22,6 @@
         />
     
     <EditText
-        android:id="@+id/username"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/username"
-        android:inputType="textEmailAddress"
-        android:textColor="#FFFFFF"
-        
-       />
-    
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/password"
-        android:layout_marginTop="20dp"
-        android:inputType="textPassword"
-        android:textColor="#FFFFFF"
-        
-       />
-    
-    <EditText
         android:id="@+id/cardNumber"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -54,11 +33,11 @@
        />
     
     <Button
-        android:id="@+id/request"
+        android:id="@+id/addNewCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="@string/request"
+        android:text="@string/addNewCard"
         android:textColor="#FFFFFF"
         
         />
