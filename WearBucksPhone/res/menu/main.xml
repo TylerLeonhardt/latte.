@@ -8,5 +8,11 @@
         android:orderInCategory="100"
         android:title="My Account"
         app:showAsAction="never"/>
+    
+    <item
+        android:id="@+id/action_addcard"
+        android:orderInCategory="100"
+        android:title="Add Card"
+        app:showAsAction="never"/>
 
 </menu>

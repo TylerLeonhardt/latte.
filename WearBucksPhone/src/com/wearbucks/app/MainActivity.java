@@ -60,7 +60,8 @@ public class MainActivity extends ActionBarActivity {
 	//stored preferences
 	public static final String USERNAME = "USERNAME";
 	public static final String PASSWORD = "PASSWORD";
-	public String username, password;
+	public static final String CARDNUMBER = "CARDNUMBER";
+	public String username, password, listOfCards = "";
 	
 	//Storing data
 	SharedPreferences pref;
@@ -94,6 +95,10 @@ public class MainActivity extends ActionBarActivity {
         	getCreds();
         }
         
+        //add empty card number to initialize list
+        editor.putString(CARDNUMBER, null);
+        editor.commit();
+        
         //Request Listener
         addNewCard.setOnClickListener( new OnClickListener() {
 
@@ -123,41 +128,46 @@ public class MainActivity extends ActionBarActivity {
     private void addCard(){
     	//show dialog
     	// get prompts.xml view
-    			LayoutInflater li = LayoutInflater.from(this);
-    			View promptsView = li.inflate(R.layout.activity_addcard, null);
+		LayoutInflater li = LayoutInflater.from(this);
+		View promptsView = li.inflate(R.layout.activity_addcard, null);
 
-    			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-    					this);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+				this);
 
-    			// set prompts.xml to alertdialog builder
-    			alertDialogBuilder.setView(promptsView);
+		// set prompts.xml to alertdialog builder
+		alertDialogBuilder.setView(promptsView);
+		
+		final EditText inputCardNumber = (EditText) promptsView.findViewById(R.id.cardNumber);
 
-    			final EditText un = (EditText) promptsView.findViewById(R.id.usernameInput);
-    			final EditText pass = (EditText) promptsView.findViewById(R.id.passwordInput);
+		// set dialog message
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Save Card",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+				//get user input for card number
+			    //valid card number
+			    //add it to the SharedPreference list
+			    listOfCards = listOfCards + "" + inputCardNumber.getText().toString() + ";";
+			    editor.putString(CARDNUMBER, listOfCards);
+			    editor.commit();
+			    
+			    System.err.println(pref.getString(CARDNUMBER, null));
+			    
+			    }
+			  })
+			.setNegativeButton("Cancel",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+				dialog.cancel();
+			    }
+			  });
 
-    			// set dialog message
-    			alertDialogBuilder
-    				.setCancelable(false)
-    				.setPositiveButton("Save Card",
-    				  new DialogInterface.OnClickListener() {
-    				    public void onClick(DialogInterface dialog,int id) {
-    					//get user input for card number
-    				    //valid card number
-    				    //add it to the SharedPreference list
-    				    }
-    				  })
-    				.setNegativeButton("Cancel",
-    				  new DialogInterface.OnClickListener() {
-    				    public void onClick(DialogInterface dialog,int id) {
-    					dialog.cancel();
-    				    }
-    				  });
+		// create alert dialog
+		AlertDialog alertDialog = alertDialogBuilder.create();
 
-    			// create alert dialog
-    			AlertDialog alertDialog = alertDialogBuilder.create();
-
-    			// show it
-    			alertDialog.show();
+		// show it
+		alertDialog.show();
     }
     
     private void getCreds(){
@@ -295,6 +305,10 @@ public class MainActivity extends ActionBarActivity {
 
     		// show it
     		alertDialog.show();
+        	
+            return true;
+        } else if (id == R.id.action_addcard) {
+        	addCard();
         	
             return true;
         }
