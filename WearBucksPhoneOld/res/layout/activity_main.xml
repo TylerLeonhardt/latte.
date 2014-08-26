@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingRight="60dp"
+    android:paddingBottom="0dp"
+    android:paddingLeft="60dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="#802A2A"
+    tools:context="com.wearbucks.app.MainActivity" >
+    
+    <ImageView 
+        android:id="@+id/wearbucks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:contentDescription="@string/wearbucks"
+        android:src="@drawable/wearbucks"
+        
+        />
+    
+    <EditText
+        android:id="@+id/cardNumber"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/cardnumber"
+        android:layout_marginTop="20dp"
+        android:inputType="number"
+        android:textColor="#FFFFFF"
+        
+       />
+    
+    <Button
+        android:id="@+id/addNewCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/addNewCard"
+        android:textColor="#FFFFFF"
+        
+        />
+    
+    <ImageView 
+        android:id="@+id/barcode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/barcode"
+        
+        />
+    
+    <TextView 
+        android:id="@+id/response"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        
+        />
+
+</LinearLayout>
