@@ -27,3 +27,6 @@ proguard/
 
 # Because Annoying
 .DS_Store
+
+#temp
+WearBucksPhoneOld/
