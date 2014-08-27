@@ -11,6 +11,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Main screen where the cards are" />
+        android:text="Main screen where the cards are"
+        android:id="@+id/main_card_display" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/temp"
+        android:layout_below="@id/main_card_display" />
 
 </RelativeLayout>

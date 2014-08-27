@@ -1,21 +1,45 @@
 package com.wearbucks.app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
+	
+	// User's credentials to index database
+	public static String USERNAME = "username";
+	public static String PASSWORD = "password";
+	public static String DEFAULTCARD = "dcard";	
+	public static String LISTOFCARDS = "listofcards";
+	
+	public static SharedPreferences pref;
+	public static SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        Intent intent = new Intent(this, SetupInitialActivity.class);
-        startActivity(intent);
+        pref = this.getPreferences(Context.MODE_PRIVATE);
+        editor = pref.edit();
+        
+        //editor.clear().commit();	//remove on launch
+        
+        if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
+	        //TODO: add check if already have user sharedprefs
+	        Intent intent = new Intent(this, SetupInitialActivity.class);
+	        startActivity(intent);
+        }
+        
+        // Display user credentials for now
+        TextView temp = (TextView) findViewById(R.id.temp);
+        temp.setText(pref.getString(USERNAME, null) + " -> " + pref.getString(PASSWORD, null) + pref.getString(DEFAULTCARD, null) + pref.getString(LISTOFCARDS, null));
     }
 
 
