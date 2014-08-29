@@ -1,8 +1,11 @@
 package com.wearbucks.app;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -16,7 +19,7 @@ public class MainActivity extends ActionBarActivity {
 	public static String USERNAME = "username";
 	public static String PASSWORD = "password";
 	public static String DEFAULTCARD = "dcard";	
-	public static String LISTOFCARDS = "listofcards";
+	public static String LISTOFCARDS = "listofcards";	//format: "*16DigitCardNumber;CustomColor*16DigitCardNumber;CustomColor*"
 	
 	public static SharedPreferences pref;
 	public static SharedPreferences.Editor editor;
@@ -26,10 +29,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        // Set action bar color
+        ActionBar bar = getActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.dark_green)));
+        
         pref = this.getPreferences(Context.MODE_PRIVATE);
         editor = pref.edit();
         
-        //editor.clear().commit();	//remove on launch
+        editor.clear().commit();	//remove on launch
         
         if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
 	        //TODO: add check if already have user sharedprefs

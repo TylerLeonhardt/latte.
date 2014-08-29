@@ -1,0 +1,5 @@
+========
+| BUGS |
+========
+
+08/28/14: imoreira: showing popup after rotating orientation crashes with WindowLeaked Activity error.

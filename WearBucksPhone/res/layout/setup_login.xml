@@ -12,7 +12,7 @@
         android:id="@+id/login_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Log in with Starbs account pls "
+        android:text="icon depicting logining in to starbs via weakbucks"
         android:textAppearance="?android:attr/textAppearanceLarge" 
         android:layout_centerHorizontal="true"
         />
@@ -21,11 +21,12 @@
         android:id="@+id/username_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="username"
+        android:hint="Starbucks email"
         android:layout_centerHorizontal="true" 
         android:layout_below="@id/login_title"
         android:singleLine="true"
         android:maxLines="1"
+        android:layout_marginTop="20dp"
         >
  
         <requestFocus />
@@ -36,12 +37,13 @@
         android:id="@+id/password_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="password"
+        android:hint="Starbucks password"
         android:password="true"
         android:layout_centerHorizontal="true" 
         android:layout_below="@id/username_input"
         android:singleLine="true"
         android:maxLines="1"
+        android:layout_marginTop="10dp"
         >
  
     </EditText>
@@ -50,10 +52,15 @@
         android:id="@+id/continue_to_add_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login >"
+        android:text="Login"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:onClick="replaceFragment"
+        android:background="@android:color/transparent"
+        android:textAllCaps="true"
+        android:textColor="@color/dark_green"
+        android:textStyle="bold"
+        android:layout_marginRight="10dp"
         />
   	
   	<Button
@@ -64,6 +71,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:onClick="replaceFragment"
+        android:background="@android:color/transparent"
+        android:textAllCaps="true"
+        android:textColor="@color/light_grey"
         />
 
 </RelativeLayout>

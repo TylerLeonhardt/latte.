@@ -1,9 +1,12 @@
 package com.wearbucks.app;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +27,10 @@ public class SetupInitialActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setup_initial);
+        
+        // Set action bar color
+        ActionBar bar = getActionBar();
+        bar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.dark_green)));
         
         loginFragment = new LoginFragment();
         addCardFragment = new AddCardFragment();
@@ -55,7 +62,7 @@ public class SetupInitialActivity extends FragmentActivity {
         	if(loginFragment.isValid()) {
                 ft.replace(R.id.frame_location, addCardFragment);
         	} else {
-        		showError("Login invalid boooo");
+        		showError("Incorrect login", "Please check username and password");
         	}
         	
         } else if(viewId == R.id.continue_to_account_summary){  
@@ -64,7 +71,7 @@ public class SetupInitialActivity extends FragmentActivity {
         	if(addCardFragment.isValid()) {
                 ft.replace(R.id.frame_location, new SummaryFragment());
         	} else {
-        		showError("Card invalid LAME");
+        		showError("Incorrect card", "Please check card number");
         	}
         	
         } else if(viewId == R.id.continue_to_main){
@@ -93,12 +100,12 @@ public class SetupInitialActivity extends FragmentActivity {
 		editor.putString(MainActivity.USERNAME, loginFragment.username);
 		editor.putString(MainActivity.PASSWORD, loginFragment.password);
 		editor.putString(MainActivity.DEFAULTCARD, addCardFragment.cardNumber);
-		editor.putString(MainActivity.LISTOFCARDS, "*" + addCardFragment.cardNumber + "*");
+		editor.putString(MainActivity.LISTOFCARDS, "*" + addCardFragment.cardNumber + ";" + addCardFragment.selectedColor + "*");
 		
 		editor.commit();
 	}
 	
-	public void showError(String error) {
+	public void showError(String error, String helpText) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		LayoutInflater li = LayoutInflater.from(this);
 		View promptsView = li.inflate(R.layout.error_message, null);
@@ -106,11 +113,13 @@ public class SetupInitialActivity extends FragmentActivity {
 		alertDialogBuilder.setView(promptsView);
 
 		final TextView details = (TextView) promptsView.findViewById(R.id.error_details);
+		final TextView help = (TextView) promptsView.findViewById(R.id.error_help);
 		details.setText(error);
+		help.setText(helpText);
 
 		alertDialogBuilder
 			.setCancelable(false)
-			.setPositiveButton("Okay",
+			.setPositiveButton("Try Again",
 			  new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog,int id) {
 				

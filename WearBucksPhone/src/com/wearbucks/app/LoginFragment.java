@@ -1,6 +1,7 @@
 package com.wearbucks.app;
 
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,9 +17,14 @@ public class LoginFragment extends Fragment {
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    	view = inflater.inflate(R.layout.setup_login, container, false);
+    	
+    	// Set default font for password
+    	EditText password = (EditText) view.findViewById(R.id.password_input);
+    	password.setTypeface(Typeface.DEFAULT);
+    	
     	// Inflate the layout for this fragment
-        return view = inflater.inflate(R.layout.setup_login, container, false);
+        return view;
     }
     
     public boolean isValid() {

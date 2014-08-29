@@ -13,26 +13,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Welcome to WearBucks"
+        android:text="Wearbucks"
+        android:textSize="26dp"
+        android:layout_marginTop="40dp"
         />
     
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="this is how do"
         android:id="@+id/description_text" 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="Add Starbucks cards and display them on your Wear device to pay at Starbucks\n\nadd 1-2-3 steps here"
         android:layout_below="@id/welcome_text"
-        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:textSize="16dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/light_grey"
+        android:textStyle="italic"
         />
     
     <Button
         android:id="@+id/continue_to_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Continue >"
+        android:text="Let's Go!"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:onClick="replaceFragment"
+        android:background="@android:color/transparent"
+        android:textAllCaps="true"
+        android:textColor="@color/dark_green"
+        android:textStyle="bold"
+        android:layout_marginRight="10dp"
         />
 
 </RelativeLayout>
