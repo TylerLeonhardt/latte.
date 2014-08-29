@@ -19,14 +19,28 @@ public class AddCardFragment extends Fragment {
 	public String cardNumber;
 	public int selectedColor = 0;
 	
+	// Layout elements
+	public EditText cardNumber1;
+	public EditText cardNumber2;
+	public EditText cardNumber3;
+	public EditText cardNumber4;
+	public RadioGroup group;
+	public View radioButton;
+	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setup_addcard, container, false);
         
-        final EditText cardNumber1 = ((EditText) view.findViewById(R.id.card_input_1));
-        final EditText cardNumber2 = ((EditText) view.findViewById(R.id.card_input_2));
-        final EditText cardNumber3 = ((EditText) view.findViewById(R.id.card_input_3));
-        final EditText cardNumber4 = ((EditText) view.findViewById(R.id.card_input_4));
+        // Get all card elements
+        cardNumber1 = ((EditText) view.findViewById(R.id.card_input_1));
+        cardNumber2 = ((EditText) view.findViewById(R.id.card_input_2));
+        cardNumber3 = ((EditText) view.findViewById(R.id.card_input_3));
+        cardNumber4 = ((EditText) view.findViewById(R.id.card_input_4));
+        
+        // Get all color chooser elements
+        group = (RadioGroup) view.findViewById(R.id.card_color_group);
+        int checkedButton = group.getCheckedRadioButtonId();
+    	radioButton = group.findViewById(checkedButton);
         
         EditText[] listOfSegments = {cardNumber1, cardNumber2, cardNumber3, cardNumber4};
         		
@@ -43,7 +57,7 @@ public class AddCardFragment extends Fragment {
 	        	
 	        	System.err.println("== " + listOfSegments[position].getText().toString().length());
 	        	
-	            if (listOfSegments[position].getText().toString().length() == LENGTH_SEGMENT && position < NUMBER_OF_SEGMENTS) {
+	            if (listOfSegments[position].getText().toString().length() == LENGTH_SEGMENT && position != NUMBER_OF_SEGMENTS-1) {
 	            	listOfSegments[position+1].requestFocus();
 	            } else if (listOfSegments[position].getText().toString().length() == 0 && position != 0) {
 	            	listOfSegments[position-1].requestFocus();
@@ -55,23 +69,19 @@ public class AddCardFragment extends Fragment {
     }
     
     public boolean isValid() {
-    	String cardNumber1 = ((EditText) view.findViewById(R.id.card_input_1)).getText().toString();
-    	String cardNumber2 = ((EditText) view.findViewById(R.id.card_input_2)).getText().toString();
-    	String cardNumber3 = ((EditText) view.findViewById(R.id.card_input_3)).getText().toString();
-    	String cardNumber4 = ((EditText) view.findViewById(R.id.card_input_4)).getText().toString();
+    	String cardSegment1 = cardNumber1.getText().toString();
+    	String cardSegment2 = cardNumber2.getText().toString();
+    	String cardSegment3 = cardNumber3.getText().toString();
+    	String cardSegment4 = cardNumber4.getText().toString();
     	
-    	String cardNumber = cardNumber1 + cardNumber2 + cardNumber3 + cardNumber4;
+    	String cardNumber = cardSegment1 + cardSegment2 + cardSegment3 + cardSegment4;
     	
     	//TODO: make a better validation check
     	if(cardNumber.length() < 16) {
     		return false;
     	}
     	
-    	this.cardNumber = cardNumber;
-    	
-    	RadioGroup group = (RadioGroup) view.findViewById(R.id.card_color_group);
-    	int checkedButton = group.getCheckedRadioButtonId();
-    	View radioButton = group.findViewById(checkedButton);
+    	this.cardNumber = cardNumber;    
     	int idx = group.indexOfChild(radioButton);
     	
     	selectedColor = idx;

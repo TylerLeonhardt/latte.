@@ -41,4 +41,9 @@ public class LoginFragment extends Fragment {
     	
     	return true;
     }
+    
+    public String getJsonString(){
+    	
+    	return "{\"username\":\""+username+"\",\"password\":\""+password+"\"}";
+    }
 }
