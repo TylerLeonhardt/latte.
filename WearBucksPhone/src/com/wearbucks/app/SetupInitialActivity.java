@@ -19,7 +19,7 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 	public LoginFragment loginFragment; 
 	public AddCardFragment addCardFragment;
 	public FragmentTransaction ft;
-	public String response;
+	public String response;			//user stats
 	
 	// User's credentials
 	public SharedPreferences pref;
