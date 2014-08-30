@@ -1,5 +1,10 @@
 package com.wearbucks.app;
 
+import java.text.DecimalFormat;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -19,7 +24,7 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 	public LoginFragment loginFragment; 
 	public AddCardFragment addCardFragment;
 	public FragmentTransaction ft;
-	public String response;			//user stats
+	public JSONObject response;			//user stats
 	
 	// User's credentials
 	public SharedPreferences pref;
@@ -65,7 +70,7 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
         	try {
 				if(loginFragment.isValid()) {
 					Toast.makeText(getApplicationContext(), "Loading...",
-							   Toast.LENGTH_LONG).show();
+							   Toast.LENGTH_SHORT).show();
 				    new AccountAsyncTask(this, loginFragment.getJsonString()).execute();
 				} else {
 					showError("Incorrect login", "Please check username and password");
@@ -78,6 +83,7 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
         	ft.setCustomAnimations(R.anim.enter_fragment, R.anim.exit_fragment);
         	
         	if(addCardFragment.isValid()) {
+        		saveUserData();
                 ft.replace(R.id.frame_location, new SummaryFragment());
                 ft.commit();
         	} else {
@@ -85,7 +91,6 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
         	}
         	
         } else if(viewId == R.id.continue_to_main){
-        	saveUserData();
         	
         	Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -112,6 +117,15 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 		editor.putString(MainActivity.PASSWORD, loginFragment.password);
 		editor.putString(MainActivity.DEFAULTCARD, addCardFragment.cardNumber);
 		editor.putString(MainActivity.LISTOFCARDS, "*" + addCardFragment.cardNumber + ";" + addCardFragment.selectedColor + "*");
+		
+		try {
+			editor.putString(MainActivity.NAME, response.getString("customer_name"));
+			editor.putString(MainActivity.STARS, response.getString("stars"));
+			editor.putString(MainActivity.REWARDS, response.getString("rewards"));
+			editor.putString(MainActivity.BALANCE, response.getString("dollar_balance"));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		
 		editor.commit();
 	}
@@ -147,20 +161,19 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 	}
 	
 	@Override
-	public void onEventCompleted(String val) {
-		// TODO Auto-generated method stub
+	public void onEventCompleted(JSONObject js) {
+		// Save user information
+		
 		
 		ft.replace(R.id.frame_location, addCardFragment);
 		ft.commit();
 		
-		response = val;
+		response = js;
 		
 	}
 
 	@Override
 	public void onEventFailed() {
-		// TODO Auto-generated method stub
-		Toast.makeText(getApplicationContext(), "I <3 Isabella",
-				   Toast.LENGTH_LONG).show();
+		showError("Incorrect login", "Please check username and password");
 	}
 }

@@ -39,8 +39,6 @@ public class AddCardFragment extends Fragment {
         
         // Get all color chooser elements
         group = (RadioGroup) view.findViewById(R.id.card_color_group);
-        int checkedButton = group.getCheckedRadioButtonId();
-    	radioButton = group.findViewById(checkedButton);
         
         EditText[] listOfSegments = {cardNumber1, cardNumber2, cardNumber3, cardNumber4};
         		
@@ -55,12 +53,8 @@ public class AddCardFragment extends Fragment {
     	listOfSegments[position].addTextChangedListener(new TextWatcher(){
 	        public void afterTextChanged(Editable s) {
 	        	
-	        	System.err.println("== " + listOfSegments[position].getText().toString().length());
-	        	
 	            if (listOfSegments[position].getText().toString().length() == LENGTH_SEGMENT && position != NUMBER_OF_SEGMENTS-1) {
 	            	listOfSegments[position+1].requestFocus();
-	            } else if (listOfSegments[position].getText().toString().length() == 0 && position != 0) {
-	            	listOfSegments[position-1].requestFocus();
 	            }
 	        }
 	        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -74,14 +68,17 @@ public class AddCardFragment extends Fragment {
     	String cardSegment3 = cardNumber3.getText().toString();
     	String cardSegment4 = cardNumber4.getText().toString();
     	
-    	String cardNumber = cardSegment1 + cardSegment2 + cardSegment3 + cardSegment4;
+    	String cardNumber = "" + cardSegment1 + cardSegment2 + cardSegment3 + cardSegment4;
     	
     	//TODO: make a better validation check
     	if(cardNumber.length() < 16) {
     		return false;
     	}
     	
-    	this.cardNumber = cardNumber;    
+    	this.cardNumber = cardNumber;
+    	
+    	int checkedButton = group.getCheckedRadioButtonId();
+    	radioButton = group.findViewById(checkedButton);
     	int idx = group.indexOfChild(radioButton);
     	
     	selectedColor = idx;

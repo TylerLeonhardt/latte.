@@ -46,7 +46,7 @@ public class AccountAsyncTask extends AsyncTask<Void, Void, Void>{
     	
         if(callback != null) {
         	if(s == "false"){
-        		callback.onEventCompleted(response);
+        		callback.onEventCompleted(js);
         	}else{
         		callback.onEventFailed();
         	}

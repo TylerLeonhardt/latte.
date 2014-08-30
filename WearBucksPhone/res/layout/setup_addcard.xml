@@ -16,15 +16,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge" 
         android:layout_centerHorizontal="true"
         />
-    
-    <!-- <ImageView
-        android:id="@+id/setup_card"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:scaleType="fitXY"
-        android:src="@drawable/credit_card_image" 
-        /> -->
         
     <RelativeLayout
 	    android:layout_width="wrap_content"
@@ -48,14 +39,32 @@
  
     </EditText>
     
+    <TextView
+        android:id="@+id/card_dash_1"
+        android:layout_toRightOf="@id/card_input_1"
+        android:text="-"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        />
+    
     <EditText
         android:id="@+id/card_input_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="####"
-        android:layout_toRightOf="@id/card_input_1"
+        android:layout_toRightOf="@id/card_dash_1"
         android:maxLength="4"
         android:inputType="number"
+        />
+    
+    <TextView
+        android:id="@+id/card_dash_2"
+        android:layout_toRightOf="@id/card_input_2"
+        android:text="-"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
         />
     
     <EditText
@@ -63,9 +72,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="####" 
-        android:layout_toRightOf="@id/card_input_2"
+        android:layout_toRightOf="@id/card_dash_2"
         android:maxLength="4"
         android:inputType="number"
+        />
+    
+    <TextView
+        android:id="@+id/card_dash_3"
+        android:layout_toRightOf="@id/card_input_3"
+        android:text="-"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
         />
     
     <EditText
@@ -73,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="####"
-        android:layout_toRightOf="@id/card_input_3"
+        android:layout_toRightOf="@id/card_dash_3"
         android:maxLength="4"
         android:inputType="number"
         />

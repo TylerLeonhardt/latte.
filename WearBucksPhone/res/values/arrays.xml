@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Same order as RadioGroup in setup_addcard.xml -->
+    <string-array name="card_colors">
+        <item>@drawable/card_green</item>
+        <item>@drawable/card_red</item>
+        <item>@drawable/card_gold</item>
+    </string-array>
+
+</resources>

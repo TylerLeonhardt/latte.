@@ -16,6 +16,11 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity {
 	
 	// User's credentials to index database
+	public static String NAME = "name";
+	public static String REWARDS = "rewards";
+	public static String STARS = "stars";
+	public static String BALANCE = "balance";
+	
 	public static String USERNAME = "username";
 	public static String PASSWORD = "password";
 	public static String DEFAULTCARD = "dcard";	
