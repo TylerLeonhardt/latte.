@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 public class LoginFragment extends Fragment {
@@ -15,6 +16,9 @@ public class LoginFragment extends Fragment {
 	public String password;
 	public View view;
 	
+	public Button backButton;
+	public Button continueButton;
+	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	view = inflater.inflate(R.layout.setup_login, container, false);
@@ -22,6 +26,10 @@ public class LoginFragment extends Fragment {
     	// Set default font for password
     	EditText password = (EditText) view.findViewById(R.id.password_input);
     	password.setTypeface(Typeface.DEFAULT);
+    	
+    	// Get buttons to disable / enable later
+    	backButton = (Button) view.findViewById(R.id.back_to_welcome);
+    	continueButton = (Button) view.findViewById(R.id.continue_to_add_card);
     	
     	// Inflate the layout for this fragment
         return view;
@@ -40,6 +48,16 @@ public class LoginFragment extends Fragment {
     	this.password = password;
     	
     	return true;
+    }
+    
+    public void disableButtons() {
+    	backButton.setEnabled(false);
+    	continueButton.setEnabled(false);
+    }
+    
+    public void enableButtons() {
+    	backButton.setEnabled(true);
+    	continueButton.setEnabled(true);
     }
     
     public String getJsonString(){

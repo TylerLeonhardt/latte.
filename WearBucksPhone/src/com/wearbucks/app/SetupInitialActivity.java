@@ -69,11 +69,13 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
         	
         	try {
 				if(loginFragment.isValid()) {
+					loginFragment.disableButtons();
 					Toast.makeText(getApplicationContext(), "Loading...",
 							   Toast.LENGTH_SHORT).show();
 				    new AccountAsyncTask(this, loginFragment.getJsonString()).execute();
 				} else {
 					showError("Incorrect login", "Please check username and password");
+					loginFragment.enableButtons();
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
