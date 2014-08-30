@@ -8,11 +8,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.wearbucks.app.MainActivity" >
 
-    <TextView
+    <ImageView
         android:id="@+id/login_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="icon depicting logining in to starbs via weakbucks"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/secure_login"
         android:textAppearance="?android:attr/textAppearanceLarge" 
         android:layout_centerHorizontal="true"
         />
@@ -26,7 +26,7 @@
         android:layout_below="@id/login_title"
         android:singleLine="true"
         android:maxLines="1"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         >
  
         <requestFocus />
@@ -43,7 +43,7 @@
         android:layout_below="@id/username_input"
         android:singleLine="true"
         android:maxLines="1"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         >
  
     </EditText>
