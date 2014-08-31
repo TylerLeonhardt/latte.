@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,4 +20,29 @@
         android:id="@+id/temp"
         android:layout_below="@id/main_card_display" />
 
-</RelativeLayout>
+</RelativeLayout> -->
+<uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ptr_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+ 
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:padding="8dp"
+        android:scrollbarStyle="insideInset">
+ 
+        <!-- Below TextView used to update the screen. You can use any
+             android View with ScrollView.    -->
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Pull Down to Add More Text"
+            android:id="@+id/scrollTextView"
+            />
+ 
+    </ScrollView>
+ 
+</uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
