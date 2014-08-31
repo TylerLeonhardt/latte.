@@ -1,19 +1,23 @@
 package com.wearbucks.app;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements OnRefreshListener{
 	
 	// User's credentials to index database
 	public static String NAME = "name";
@@ -28,6 +32,9 @@ public class MainActivity extends ActionBarActivity {
 	
 	public static SharedPreferences pref;
 	public static SharedPreferences.Editor editor;
+	
+	public TextView temp;
+	private PullToRefreshLayout mPullToRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
         pref = this.getPreferences(Context.MODE_PRIVATE);
         editor = pref.edit();
         
-        editor.clear().commit();	//remove on launch
+        //editor.clear().commit();	//remove on launch
         
         if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
 	        //TODO: add check if already have user sharedprefs
@@ -50,8 +57,15 @@ public class MainActivity extends ActionBarActivity {
         }
         
         // Display user credentials for now
-        TextView temp = (TextView) findViewById(R.id.temp);
+        temp = (TextView) findViewById(R.id.scrollTextView);
         temp.setText(pref.getString(USERNAME, null) + " -> " + pref.getString(PASSWORD, null) + pref.getString(DEFAULTCARD, null) + pref.getString(LISTOFCARDS, null));
+        
+      ///You will setup the action bar with pull to refresh layout
+        mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
+        ActionBarPullToRefresh.from(this)
+          .allChildrenArePullable()
+          .listener(this)
+          .setup(mPullToRefreshLayout);
     }
 
 
@@ -73,4 +87,46 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+	@Override
+	public void onRefreshStarted(View view) {
+		// TODO Auto-generated method stub
+		
+		/**
+         * Below  AsyncTask class is used to update the view
+         * Asynchronously
+         */
+        new AsyncTask<Void, Void, Void>() {
+
+              @Override
+              protected Void doInBackground(Void... params) {
+                  try {
+                      Thread.sleep(5000);
+                      //Here you can get the new text from DB or through a web service
+                      //Then YOu can pass it to onPostExecute() method to
+                      //Update the view
+
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  }
+                  return null;
+              }
+
+              @Override
+              protected void onPostExecute(Void result) {
+                  super.onPostExecute(result);
+
+                  //Here you can update the view
+                  temp.setText(temp.getText().toString()+"--New Content Added");
+
+                  // Notify PullToRefreshLayout that the refresh has finished
+                  mPullToRefreshLayout.setRefreshComplete();
+              }
+          }.execute();
+		
+		
+		
+	}
+
 }
