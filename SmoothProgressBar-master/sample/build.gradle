@@ -1,0 +1,46 @@
+apply plugin: 'android-sdk-manager'
+apply plugin: 'android'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':library')
+}
+
+android {
+    compileSdkVersion Integer.parseInt(project.COMPILE_SDK_VERSION)
+    buildToolsVersion project.BUILD_TOOLS_VERSION
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 19
+        versionName project.VERSION_NAME
+        versionCode Integer.parseInt(project.VERSION_CODE)
+    }
+
+    signingConfigs {
+        release
+    }
+    buildTypes {
+        debug {
+
+        }
+        release {
+            signingConfig project.hasProperty('storeFile') ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+}
+if (project.hasProperty('storeFile')) {
+    android.signingConfigs.release.storeFile = file(storeFile)
+}
+if (project.hasProperty('keyAlias')) {
+    android.signingConfigs.release.keyAlias = keyAlias
+}
+if (project.hasProperty('storePassword')) {
+    android.signingConfigs.release.storePassword = storePassword
+}
+if (project.hasProperty('keyPassword')) {
+    android.signingConfigs.release.keyPassword = keyPassword
+}
