@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
         pref = this.getPreferences(Context.MODE_PRIVATE);
         editor = pref.edit();
         
-        editor.clear().commit();	//remove on launch
+        //editor.clear().commit();	//remove on launch
         
         if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
 	        //TODO: add check if already have user sharedprefs
