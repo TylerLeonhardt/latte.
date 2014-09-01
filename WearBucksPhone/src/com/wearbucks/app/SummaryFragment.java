@@ -44,6 +44,10 @@ public class SummaryFragment extends Fragment {
         // Calculate the actual number of stars until the next reward
         String stringStars = pref.getString(MainActivity.STARS, null);
         int numStars = (stringStars == null) ? 0 : Integer.parseInt(stringStars)%12;
+        editor.putString(MainActivity.STARS, "" + numStars);
+        editor.commit();
+        
+        System.err.println("summary: " + numStars);
         
         // Set all data fields to match API response
         rewardsNumber.setText(String.valueOf(pref.getString(MainActivity.REWARDS, null)));

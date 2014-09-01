@@ -35,10 +35,6 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setup_initial);
         
-        // Set action bar color
-        ActionBar bar = getActionBar();
-        bar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.dark_green)));
-        
         loginFragment = new LoginFragment();
         addCardFragment = new AddCardFragment();
         ft = getSupportFragmentManager().beginTransaction();
@@ -124,7 +120,7 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 			editor.putString(MainActivity.NAME, response.getString("customer_name"));
 			editor.putString(MainActivity.STARS, response.getString("stars"));
 			editor.putString(MainActivity.REWARDS, response.getString("rewards"));
-			editor.putString(MainActivity.BALANCE, response.getString("dollar_balance"));
+			editor.putString(MainActivity.BALANCE, response.getString("dollar_balance").substring(0, response.getString("dollar_balance").indexOf(".") + 2));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

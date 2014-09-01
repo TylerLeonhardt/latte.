@@ -1,26 +1,16 @@
 package com.wearbucks.app;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -42,53 +32,47 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	public static String DEFAULTCARD = "dcard";	
 	public static String LISTOFCARDS = "listofcards";	//format: "*16DigitCardNumber;CustomColor*16DigitCardNumber;CustomColor*"
 	
-	private String data_name = null;
-	private String data_rewards = null;
-	private String data_stars = null;
-	private String data_balance = null;
-	
-	private String data_username = null;
-	private String data_password = null;
-	private String data_defaultcard = null;	
-	private String data_listofcards = null;
-	
 	public static SharedPreferences pref;
 	public static SharedPreferences.Editor editor;
 	
 	public TextView temp;
 	private PullToRefreshLayout mPullToRefreshLayout;
+	
+	// Layout elements
+	public TextView rewardsNumber;
+	public TextView starsNumber;
+	public TextView balanceNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        // Set action bar color
-        ActionBar bar = getActionBar();
-        bar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.dark_green)));
-        
         pref = this.getPreferences(Context.MODE_PRIVATE);
         editor = pref.edit();
         
-        this.loadResources();
-        
         //editor.clear().commit();	//remove on launch
-        if (data_username == null || data_password == null) {        
+        if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
 	        //TODO: add check if already have user sharedprefs
 	        Intent intent = new Intent(this, SetupInitialActivity.class);
 	        startActivity(intent);
         }
         
-        printValues();
-        
-        
-        //this.loadResources();
+        String nameActionBar = pref.getString(NAME, "");
+        if (nameActionBar.equals("")) {
+        	getActionBar().setTitle("  Welcome!");
+        } else {
+        	getActionBar().setTitle("  Welcome, " + nameActionBar.split(" ")[0] + "!");
+        }
         
         // Display user credentials for now
-        temp = (TextView) findViewById(R.id.scrollTextView);
-        temp.setText(USERNAME + " -> " + PASSWORD + DEFAULTCARD + LISTOFCARDS);
+        rewardsNumber = (TextView) findViewById(R.id.rewards_number_main);
+        starsNumber = (TextView) findViewById(R.id.stars_number_main);
+        balanceNumber = (TextView) findViewById(R.id.balance_main);
         
-      ///You will setup the action bar with pull to refresh layout
+        updateDataViews();
+        
+        // You will setup the action bar with pull to refresh layout
         mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
         ActionBarPullToRefresh.from(this)
           .allChildrenArePullable()
@@ -99,8 +83,6 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        this.saveResources();
     }
     
     @Override
@@ -121,27 +103,14 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
         }
         return super.onOptionsItemSelected(item);
     }
-
-    private void loadResources(){
-    	data_name = pref.getString(NAME, null);
-    	data_rewards = pref.getString(REWARDS, null);
-    	data_stars = pref.getString(STARS, null);
-    	data_balance = pref.getString(BALANCE, null);
-    	data_username = pref.getString(USERNAME, null);
-    	data_password = pref.getString(PASSWORD, null);
-    	data_defaultcard = pref.getString(DEFAULTCARD, null);	
-    	data_listofcards = pref.getString(LISTOFCARDS, null);
-    }
     
-    private void saveResources(){
-    	editor.putString(USERNAME, data_username);
-        editor.putString(PASSWORD, data_password);
-        editor.putString(NAME, data_name);
-        editor.putString(REWARDS, data_rewards);
-        editor.putString(DEFAULTCARD, data_defaultcard);
-        editor.putString(STARS, data_stars);
-        editor.putString(LISTOFCARDS, data_listofcards);
-        editor.putString(BALANCE, data_balance);
+    private void updateDataViews() {        
+    	Double balanceFormatted = Double.valueOf(pref.getString(BALANCE, null));
+		String balanceString = String.format("%.2f", balanceFormatted);	
+		
+    	rewardsNumber.setText(pref.getString(REWARDS, ""));
+    	balanceNumber.setText("$" + balanceString);
+    	starsNumber.setText(pref.getString(STARS, ""));
     }
     
 
@@ -149,7 +118,7 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	public void onRefreshStarted(View view) {
 		// TODO Auto-generated method stub
 		
-		String request = "{\"username\":\""+data_username+"\",\"password\":\""+data_password+"\"}";
+		String request = "{\"username\":\"" + pref.getString(USERNAME, null) + "\",\"password\":\"" + pref.getString(PASSWORD, null) + "\"}";
 		
 		new AccountAsyncTask(this, request, mPullToRefreshLayout).execute();
 		
@@ -158,39 +127,30 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	@Override
 	public void onEventCompleted(JSONObject js) {
 		// TODO Auto-generated method stub
-		System.out.println("IT WORKED\n" + js.toString());
-		
-    	try {
-    		String stringBalance = js.getString("dollar_balance");
-			data_balance = stringBalance.substring(0, stringBalance.indexOf(".") + 2);
-			data_name = js.getString("customer_name");
-	    	data_rewards = js.getString("rewards");
+		try {
+    		
+    		Double balanceFormatted = js.getDouble("dollar_balance");
+    		String balanceString = String.format("%.2f", balanceFormatted);	
+    			
+			editor.putString(BALANCE, balanceString);
+			editor.putString(NAME, js.getString("customer_name"));
+			editor.putString(REWARDS, js.getString("rewards"));
 	    	String stringStars = js.getString("stars");
-	        data_stars = "" + ((stringStars == null) ? 0 : Integer.parseInt(stringStars)%12);
+	    	int numStars = (stringStars == null) ? 0 : Integer.parseInt(stringStars)%12;
+	        editor.putString(STARS, "" + numStars);
+	        System.err.println("main: " + numStars);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
-    	printValues();
-	}
-	
-	//temp
-	public void printValues(){
-		System.out.println("\n"+data_name);
-		System.out.println(data_username);
-		System.out.println(data_password);
-		System.out.println(data_stars);
-		System.out.println(data_rewards);
-		System.out.println(data_balance);
-		System.out.println(data_defaultcard);
-		System.out.println(data_listofcards);
+    	editor.commit();
+    	updateDataViews();
 	}
 
 	@Override
 	public void onEventFailed() {
-		// TODO Add Popup to login
-		
+		// TODO Add Popup to login		
 	}
 
 }
