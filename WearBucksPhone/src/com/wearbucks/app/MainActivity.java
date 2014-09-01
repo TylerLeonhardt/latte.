@@ -1,5 +1,17 @@
 package com.wearbucks.app;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
@@ -17,7 +29,7 @@ import android.view.View;
 import android.widget.TextView;
 
 
-public class MainActivity extends ActionBarActivity implements OnRefreshListener{
+public class MainActivity extends ActionBarActivity implements OnRefreshListener, RequestEventListener{
 	
 	// User's credentials to index database
 	public static String NAME = "name";
@@ -29,6 +41,16 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	public static String PASSWORD = "password";
 	public static String DEFAULTCARD = "dcard";	
 	public static String LISTOFCARDS = "listofcards";	//format: "*16DigitCardNumber;CustomColor*16DigitCardNumber;CustomColor*"
+	
+	private String data_name = null;
+	private String data_rewards = null;
+	private String data_stars = null;
+	private String data_balance = null;
+	
+	private String data_username = null;
+	private String data_password = null;
+	private String data_defaultcard = null;	
+	private String data_listofcards = null;
 	
 	public static SharedPreferences pref;
 	public static SharedPreferences.Editor editor;
@@ -48,17 +70,23 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
         pref = this.getPreferences(Context.MODE_PRIVATE);
         editor = pref.edit();
         
-        //editor.clear().commit();	//remove on launch
+        this.loadResources();
         
-        if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
+        //editor.clear().commit();	//remove on launch
+        if (data_username == null || data_password == null) {        
 	        //TODO: add check if already have user sharedprefs
 	        Intent intent = new Intent(this, SetupInitialActivity.class);
 	        startActivity(intent);
         }
         
+        printValues();
+        
+        
+        //this.loadResources();
+        
         // Display user credentials for now
         temp = (TextView) findViewById(R.id.scrollTextView);
-        temp.setText(pref.getString(USERNAME, null) + " -> " + pref.getString(PASSWORD, null) + pref.getString(DEFAULTCARD, null) + pref.getString(LISTOFCARDS, null));
+        temp.setText(USERNAME + " -> " + PASSWORD + DEFAULTCARD + LISTOFCARDS);
         
       ///You will setup the action bar with pull to refresh layout
         mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
@@ -68,7 +96,13 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
           .setup(mPullToRefreshLayout);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
 
+        this.saveResources();
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -88,44 +122,74 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
         return super.onOptionsItemSelected(item);
     }
 
+    private void loadResources(){
+    	data_name = pref.getString(NAME, null);
+    	data_rewards = pref.getString(REWARDS, null);
+    	data_stars = pref.getString(STARS, null);
+    	data_balance = pref.getString(BALANCE, null);
+    	data_username = pref.getString(USERNAME, null);
+    	data_password = pref.getString(PASSWORD, null);
+    	data_defaultcard = pref.getString(DEFAULTCARD, null);	
+    	data_listofcards = pref.getString(LISTOFCARDS, null);
+    }
+    
+    private void saveResources(){
+    	editor.putString(USERNAME, data_username);
+        editor.putString(PASSWORD, data_password);
+        editor.putString(NAME, data_name);
+        editor.putString(REWARDS, data_rewards);
+        editor.putString(DEFAULTCARD, data_defaultcard);
+        editor.putString(STARS, data_stars);
+        editor.putString(LISTOFCARDS, data_listofcards);
+        editor.putString(BALANCE, data_balance);
+    }
+    
 
 	@Override
 	public void onRefreshStarted(View view) {
 		// TODO Auto-generated method stub
 		
-		/**
-         * Below  AsyncTask class is used to update the view
-         * Asynchronously
-         */
-        new AsyncTask<Void, Void, Void>() {
-
-              @Override
-              protected Void doInBackground(Void... params) {
-                  try {
-                      Thread.sleep(5000);
-                      //Here you can get the new text from DB or through a web service
-                      //Then YOu can pass it to onPostExecute() method to
-                      //Update the view
-
-                  } catch (InterruptedException e) {
-                      e.printStackTrace();
-                  }
-                  return null;
-              }
-
-              @Override
-              protected void onPostExecute(Void result) {
-                  super.onPostExecute(result);
-
-                  //Here you can update the view
-                  temp.setText(temp.getText().toString()+"--New Content Added");
-
-                  // Notify PullToRefreshLayout that the refresh has finished
-                  mPullToRefreshLayout.setRefreshComplete();
-              }
-          }.execute();
+		String request = "{\"username\":\""+data_username+"\",\"password\":\""+data_password+"\"}";
 		
+		new AccountAsyncTask(this, request, mPullToRefreshLayout).execute();
 		
+	}
+
+	@Override
+	public void onEventCompleted(JSONObject js) {
+		// TODO Auto-generated method stub
+		System.out.println("IT WORKED\n" + js.toString());
+		
+    	try {
+    		String stringBalance = js.getString("dollar_balance");
+			data_balance = stringBalance.substring(0, stringBalance.indexOf(".") + 2);
+			data_name = js.getString("customer_name");
+	    	data_rewards = js.getString("rewards");
+	    	String stringStars = js.getString("stars");
+	        data_stars = "" + ((stringStars == null) ? 0 : Integer.parseInt(stringStars)%12);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	printValues();
+	}
+	
+	//temp
+	public void printValues(){
+		System.out.println("\n"+data_name);
+		System.out.println(data_username);
+		System.out.println(data_password);
+		System.out.println(data_stars);
+		System.out.println(data_rewards);
+		System.out.println(data_balance);
+		System.out.println(data_defaultcard);
+		System.out.println(data_listofcards);
+	}
+
+	@Override
+	public void onEventFailed() {
+		// TODO Add Popup to login
 		
 	}
 

@@ -12,6 +12,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+
 import android.os.AsyncTask;
 
 public class AccountAsyncTask extends AsyncTask<Void, Void, Void>{
@@ -19,11 +21,12 @@ public class AccountAsyncTask extends AsyncTask<Void, Void, Void>{
 	
 	private RequestEventListener callback;
 	private String response, request;
+	private PullToRefreshLayout mPullToRefreshLayout;
 	
-	
-    public AccountAsyncTask(RequestEventListener cb, String r) {
+    public AccountAsyncTask(RequestEventListener cb, String r, PullToRefreshLayout ptl) {
         callback = cb;
         request = r;
+        mPullToRefreshLayout = ptl;
     }
 
     @Override
@@ -51,6 +54,7 @@ public class AccountAsyncTask extends AsyncTask<Void, Void, Void>{
         		callback.onEventFailed();
         	}
         }
+        if(mPullToRefreshLayout != null) mPullToRefreshLayout.setRefreshComplete();
     }
 
 	@SuppressWarnings("unchecked")
