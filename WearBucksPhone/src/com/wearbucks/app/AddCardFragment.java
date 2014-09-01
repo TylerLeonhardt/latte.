@@ -13,8 +13,8 @@ import android.widget.RadioGroup;
 public class AddCardFragment extends Fragment {
 	
 	public View view;
-	public final int LENGTH_SEGMENT = 4;
-	public final int NUMBER_OF_SEGMENTS = 4;
+	public final static int LENGTH_SEGMENT = 4;
+	public final static int NUMBER_OF_SEGMENTS = 4;
 	
 	public String cardNumber;
 	public int selectedColor = 0;
@@ -49,7 +49,7 @@ public class AddCardFragment extends Fragment {
     	return view;
     }
     
-    public void setListenerSegment(final EditText[] listOfSegments, final int position) {
+    public static void setListenerSegment(final EditText[] listOfSegments, final int position) {
     	listOfSegments[position].addTextChangedListener(new TextWatcher(){
 	        public void afterTextChanged(Editable s) {
 	        	

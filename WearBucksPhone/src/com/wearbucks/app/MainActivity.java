@@ -8,14 +8,21 @@ import org.json.JSONObject;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 
@@ -98,16 +105,23 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.new_card) {
+        	showAddNewCard();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
     
     private void updateDataViews() {        
-    	Double balanceFormatted = Double.valueOf(pref.getString(BALANCE, null));
-		String balanceString = String.format("%.2f", balanceFormatted);	
-		
+    	String getBalance = pref.getString(BALANCE, null);
+    	String balanceString;
+    	if (getBalance != null ) {
+    		Double balanceFormatted = Double.valueOf(getBalance);
+    		balanceString = String.format("%.2f", balanceFormatted);
+    	} else {
+    		balanceString = "$0.00";
+    	}
+    	
     	rewardsNumber.setText(pref.getString(REWARDS, ""));
     	balanceNumber.setText("$" + balanceString);
     	starsNumber.setText(pref.getString(STARS, ""));
@@ -152,5 +166,58 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	public void onEventFailed() {
 		// TODO Add Popup to login		
 	}
+	
+	public void showAddNewCard() {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		LayoutInflater li = LayoutInflater.from(this);
+		View promptsView = li.inflate(R.layout.add_new_card, null);
+		
+		View cardView = promptsView.findViewById(R.id.add_new_card_generic_popup); 
+		
+		// Get all card elements
+        EditText cardNumber1 = ((EditText) cardView.findViewById(R.id.card_input_1));
+        EditText cardNumber2 = ((EditText) cardView.findViewById(R.id.card_input_2));
+        EditText cardNumber3 = ((EditText) cardView.findViewById(R.id.card_input_3));
+        EditText cardNumber4 = ((EditText) cardView.findViewById(R.id.card_input_4));
+        
+        EditText[] listOfSegments = {cardNumber1, cardNumber2, cardNumber3, cardNumber4};
+        		
+		for (int i = 0; i < listOfSegments.length; i++) {
+			setListenerSegment(listOfSegments, i);
+		}
+
+		alertDialogBuilder.setView(promptsView);
+
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Add Card",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+				
+			    }
+			  })
+			  .setNegativeButton("Cancel",
+					  new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog,int id) {
+					
+				    }
+			  });
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
+	
+	public static void setListenerSegment(final EditText[] listOfSegments, final int position) {
+    	listOfSegments[position].addTextChangedListener(new TextWatcher(){
+	        public void afterTextChanged(Editable s) {
+	        	
+	            if (listOfSegments[position].getText().toString().length() == AddCardFragment.LENGTH_SEGMENT && position != AddCardFragment.NUMBER_OF_SEGMENTS-1) {
+	            	listOfSegments[position+1].requestFocus();
+	            }
+	        }
+	        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+	        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+	    }); 
+    }
 
 }
