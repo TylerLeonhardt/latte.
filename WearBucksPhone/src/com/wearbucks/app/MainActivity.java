@@ -175,10 +175,12 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 		View cardView = promptsView.findViewById(R.id.add_new_card_generic_popup); 
 		
 		// Get all card elements
-        EditText cardNumber1 = ((EditText) cardView.findViewById(R.id.card_input_1));
-        EditText cardNumber2 = ((EditText) cardView.findViewById(R.id.card_input_2));
-        EditText cardNumber3 = ((EditText) cardView.findViewById(R.id.card_input_3));
-        EditText cardNumber4 = ((EditText) cardView.findViewById(R.id.card_input_4));
+        final EditText cardNumber1 = ((EditText) cardView.findViewById(R.id.card_input_1));
+        final EditText cardNumber2 = ((EditText) cardView.findViewById(R.id.card_input_2));
+        final EditText cardNumber3 = ((EditText) cardView.findViewById(R.id.card_input_3));
+        final EditText cardNumber4 = ((EditText) cardView.findViewById(R.id.card_input_4));
+        
+        final RadioGroup group = (RadioGroup) cardView.findViewById(R.id.card_color_group);
         
         EditText[] listOfSegments = {cardNumber1, cardNumber2, cardNumber3, cardNumber4};
         		
@@ -193,7 +195,22 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 			.setPositiveButton("Add Card",
 			  new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog,int id) {
-				
+			    	String cardSegment1 = cardNumber1.getText().toString();
+			    	String cardSegment2 = cardNumber2.getText().toString();
+			    	String cardSegment3 = cardNumber3.getText().toString();
+			    	String cardSegment4 = cardNumber4.getText().toString();
+			    	
+			    	String cardNumber = "" + cardSegment1 + cardSegment2 + cardSegment3 + cardSegment4;
+			    	
+			    	//TODO: make a better validation check
+			    	if(cardNumber.length() < 16) {
+			    		//return false;
+			    	}
+			    	
+			    	int checkedButton = group.getCheckedRadioButtonId();
+			    	View radioButton = group.findViewById(checkedButton);
+			    	int idx = group.indexOfChild(radioButton);
+			    	saveNewCard(cardNumber, idx);
 			    }
 			  })
 			  .setNegativeButton("Cancel",
@@ -205,6 +222,16 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
+	}
+	
+	public void saveNewCard(String cardNumber, int colorIndex) {
+		String currentCards = pref.getString(LISTOFCARDS, "*");
+		currentCards = currentCards + cardNumber + ";" + colorIndex + "*";
+		
+		editor.putString(LISTOFCARDS, currentCards);
+		editor.commit();
+		
+		System.err.println(pref.getString(LISTOFCARDS, null));
 	}
 	
 	public static void setListenerSegment(final EditText[] listOfSegments, final int position) {
