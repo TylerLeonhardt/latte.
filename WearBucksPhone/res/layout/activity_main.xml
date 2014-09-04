@@ -111,24 +111,30 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:layout_below="@id/drop_shadow_main">
-	 
-	    <ScrollView
+	    
+	    <!-- <ScrollView
 	        android:id="@+id/scrollview"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
 	        android:padding="8dp"
-	        android:scrollbarStyle="insideInset">
+	        android:scrollbarStyle="insideInset"> -->
 	 
 	        <!-- Below TextView used to update the screen. You can use any
 	             android View with ScrollView.    -->
-	        <TextView
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:text="Pull Down to Add More Text"
-	            android:id="@+id/scrollTextView"
-	            />
+	        <!-- <RadioGroup 
+	        	android:id="@+id/cardgroup"
+	        	android:layout_width="fill_parent"
+	        	android:layout_height="wrap_content" >
+	        </RadioGroup> -->
+	        
+	        <ListView
+		        android:id="@android:id/list"
+		        android:layout_width="fill_parent"
+		        android:layout_height="fill_parent"
+	        	android:scrollbarStyle="insideInset"
+		    	/>
 	 
-	    </ScrollView>
+	    <!-- </ScrollView> -->
 	 
 	</uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
 

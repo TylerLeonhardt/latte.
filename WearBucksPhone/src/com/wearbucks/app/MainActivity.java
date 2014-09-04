@@ -1,6 +1,6 @@
 package com.wearbucks.app;
 
-import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,24 +9,32 @@ import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import android.app.AlertDialog;
+import android.app.ListActivity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 
-public class MainActivity extends ActionBarActivity implements OnRefreshListener, RequestEventListener{
+public class MainActivity extends ListActivity implements OnRefreshListener, RequestEventListener{
 	
 	// User's credentials to index database
 	public static String NAME = "name";
@@ -37,10 +45,16 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	public static String USERNAME = "username";
 	public static String PASSWORD = "password";
 	public static String DEFAULTCARD = "dcard";	
+	// Stores a set of Card
 	public static String LISTOFCARDS = "listofcards";	//format: "*16DigitCardNumber;CustomColor*16DigitCardNumber;CustomColor*"
+	
+	// Actual list of cards storing locally
+	public ArrayList<Card> activeCards;
 	
 	public static SharedPreferences pref;
 	public static SharedPreferences.Editor editor;
+	
+	public final static int NOTIFICATION_ID = 12;
 	
 	public TextView temp;
 	private PullToRefreshLayout mPullToRefreshLayout;
@@ -49,11 +63,40 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	public TextView rewardsNumber;
 	public TextView starsNumber;
 	public TextView balanceNumber;
+	
+	public RadioGroup cards;
+	
+	public static Context context;
+	public static Object systemService;
+	
+	/** Items entered by the user is stored in this ArrayList variable */
+    public ArrayList<String> list;
+ 
+    /** Declaring an ArrayAdapter to set items to ListView */
+    public CardAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
+        systemService = getSystemService(Context.NOTIFICATION_SERVICE);
+        
+        activeCards = new ArrayList<Card>();	//initialize from String version in pref.
+        // Add dummy cards for testing
+        activeCards.add(new Card("1234", 0, true));
+        activeCards.add(new Card("9876", 2, false));	//just testing different ways to init with false
+        activeCards.add(new Card("5678", 1));
+ 
+        // 1. pass context and data to the custom adapter
+        adapter = new CardAdapter(this, activeCards);
+ 
+        // 2. Get ListView from activity_main.xml
+        ListView listView = (ListView) findViewById(android.R.id.list);
+ 
+        // 3. setListAdapter
+        listView.setAdapter(adapter);
+ 
         
         pref = this.getPreferences(Context.MODE_PRIVATE);
         editor = pref.edit();
@@ -85,6 +128,15 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
           .allChildrenArePullable()
           .listener(this)
           .setup(mPullToRefreshLayout);
+        
+        //cards = (RadioGroup) findViewById(R.id.cardgroup);
+    }
+    
+    public void addNewCard() {
+        activeCards.add(new Card("1231", 1));
+        adapter.notifyDataSetChanged();
+        
+        //add new card.toString() to String version in pref
     }
 
     @Override
@@ -163,9 +215,7 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	}
 
 	@Override
-	public void onEventFailed() {
-		// TODO Add Popup to login		
-	}
+	public void onEventFailed() {}
 	
 	public void showAddNewCard() {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -211,6 +261,8 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 			    	View radioButton = group.findViewById(checkedButton);
 			    	int idx = group.indexOfChild(radioButton);
 			    	saveNewCard(cardNumber, idx);
+			    	
+			    	addNewCard();
 			    }
 			  })
 			  .setNegativeButton("Cancel",
@@ -245,6 +297,89 @@ public class MainActivity extends ActionBarActivity implements OnRefreshListener
 	        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 	        public void onTextChanged(CharSequence s, int start, int before, int count) {}
 	    }); 
+    }
+	
+	
+// I don't even	
+	public void addCard(){
+		
+		
+		
+		String cardsString = pref.getString(LISTOFCARDS, null);
+		
+		if(cardsString != null){
+		
+		String[] cardsInfo = cardsString.split("\\*");
+		
+		//String newCard = cardsInfo[cardsInfo.length-2].split(";")[0];
+		String newCard = cardsInfo[1].substring(0, cardsInfo[1].indexOf(";"));
+		
+		RadioButton rb = new RadioButton(this);
+		rb.setId(Integer.parseInt(newCard.substring(newCard.length()-5, newCard.length())));
+		rb.setOnClickListener(new BarcodeOnClickListener(Integer.parseInt(newCard.substring(newCard.length()-5, newCard.length()))));
+		rb.setText(newCard);
+		rb.setChecked(true);
+		
+		cards.addView(rb, cards.getChildCount());
+		}
+		
+	}
+	
+	public class BarcodeOnClickListener implements OnClickListener
+	{
+
+	     int barcodeNum;
+	     
+	     public BarcodeOnClickListener(int n) {
+	          barcodeNum = n;
+	     }
+
+	     @Override
+	     public void onClick(View v)
+	     {
+	    	 new BarcodeAsyncTask(barcodeNum,getApplicationContext()).execute();
+	     }
+
+	}
+	
+	public static void sendNotification(int barcodeNumber, Bitmap barcodeImage){
+    	//create intents
+    	final Intent emptyIntent = new Intent();
+    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    			
+    	//create big notification action
+    	//Intent dismissIntent = new Intent(this, );
+    	
+    	
+    	//expanded barcode image notification
+    	NotificationCompat.BigPictureStyle notiStyle = new 
+    	        NotificationCompat.BigPictureStyle();
+    	
+    	notiStyle.setBigContentTitle("WearBucks");
+    	notiStyle.setSummaryText("Barcode for card ending in " + ("" + barcodeNumber).substring(("" + barcodeNumber).length()-4));
+    	notiStyle.bigPicture( barcodeImage );
+    	
+    	NotificationManager notiManager = (NotificationManager) systemService;
+    	notiManager.cancel(NOTIFICATION_ID);
+    	
+    	//////
+    	PendingIntent dismissPendingIntent = PendingIntent.getActivity(context, 0, new Intent(context,
+				MainActivity.class), 0);
+    	
+    	//compact notification showing stats
+    	NotificationCompat.Builder mBuilder =
+    		    new NotificationCompat.Builder(context)
+    		    .setSmallIcon(R.drawable.wearbucks_logo)
+    		    .setContentTitle("WearBucks")
+    		    .setContentText("card (" + ("" + barcodeNumber).substring(("" + barcodeNumber).length()-4) + ")")
+    		    .setContentIntent(pendingIntent)
+    		    .setStyle(notiStyle)
+    		    //.setOngoing(true)
+    		    .addAction(R.drawable.wearbucks_logo, "dismiss", dismissPendingIntent)
+    		    ;
+    	
+    	//build and send notification
+    	notiManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
 }

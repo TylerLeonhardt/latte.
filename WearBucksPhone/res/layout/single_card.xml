@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+     >
+     
+    <ImageView
+        android:id="@+id/credit_card_color_single"
+        android:layout_width="53dp"
+        android:layout_height="43dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/card_green_small" 
+        android:layout_marginTop="13dp" 
+        android:layout_marginLeft="3dp"       
+        />
+    
+     <ImageView
+        android:id="@+id/credit_card_summary_single"
+        android:layout_width="60dp"
+        android:layout_height="70dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/credit_card_image"        
+        />
+ 
+    <TextView
+        android:id="@+id/card_short_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textColor="@color/black"
+        android:layout_toRightOf="@id/credit_card_summary_single"
+        android:layout_centerVertical="true"
+        android:paddingLeft="15dp" />
+ 
+</RelativeLayout>
