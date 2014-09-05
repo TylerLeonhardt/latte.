@@ -10,15 +10,11 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -26,10 +22,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -137,7 +131,6 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     
     private void initializeCards() {
 		String current = pref.getString(LISTOFCARDS, "*");
-		System.out.println("onCreate() currently saved: " + current);
 		activeCards = new ArrayList<Card>();
 		
 		// Empty; no cards saved yet (usually not possible)
@@ -149,16 +142,14 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 				
 				// Get data from it
 				String[] cardData = cards[i].split(";");
-				boolean def = cardData[2].equals("1") ? true : false;
 				
-				System.out.println("data: " + cardData[0] + " isDefault: " + cardData[2]);
+				for (String s : cardData) System.out.print(" --- " + s);
+				
+				boolean def = cardData[2].equals("1") ? true : false;
 				
 				activeCards.add(new Card(cardData[0], Integer.parseInt(cardData[1]), def));
 			}
-		}
-		
-		System.err.println("onCreate() cards: " + activeCards);
-		
+		}		
 	}
     
     private void saveCards() {
@@ -169,14 +160,10 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     	
     	editor.putString(LISTOFCARDS, allCards);
     	editor.commit();
-    	
-    	System.err.println("onDestroy() active cards: " + activeCards);
-    	System.err.println("onDestroy() saved cards: " + pref.getString(LISTOFCARDS, "none :("));
     }
 
-	public void addNewCard() {
-		// Get from popup
-        activeCards.add(new Card("7777777777777777", 1));
+	public void addNewCard(String cardNumber, int idx) {
+        activeCards.add(new Card(cardNumber, idx));
         adapter.notifyDataSetChanged();
     }
 
@@ -202,6 +189,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         int id = item.getItemId();
         if (id == R.id.new_card) {
         	showAddNewCard();
+            return true;
+        } else if (id == R.id.send_noti) {
+        	//new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this).execute();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -297,15 +287,16 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 			    	
 			    	//TODO: make a better validation check
 			    	if(cardNumber.length() < 16) {
-			    		//return false;
+			    		showError("Incorrect card", "Please check card number");
 			    	}
 			    	
 			    	int checkedButton = group.getCheckedRadioButtonId();
 			    	View radioButton = group.findViewById(checkedButton);
 			    	int idx = group.indexOfChild(radioButton);
+			    	
 			    	saveNewCard(cardNumber, idx);
 			    	
-			    	addNewCard();
+			    	addNewCard(cardNumber, idx);
 			    }
 			  })
 			  .setNegativeButton("Cancel",
@@ -342,34 +333,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	    }); 
     }
 	
-	
-// I don't even	
-	public void addCard(){
-		
-		
-		
-		String cardsString = pref.getString(LISTOFCARDS, null);
-		
-		if(cardsString != null){
-		
-		String[] cardsInfo = cardsString.split("\\*");
-		
-		//String newCard = cardsInfo[cardsInfo.length-2].split(";")[0];
-		String newCard = cardsInfo[1].substring(0, cardsInfo[1].indexOf(";"));
-		
-		RadioButton rb = new RadioButton(this);
-		rb.setId(Integer.parseInt(newCard.substring(newCard.length()-5, newCard.length())));
-		rb.setOnClickListener(new BarcodeOnClickListener(Integer.parseInt(newCard.substring(newCard.length()-5, newCard.length()))));
-		rb.setText(newCard);
-		rb.setChecked(true);
-		
-		cards.addView(rb, cards.getChildCount());
-		}
-		
-	}
-	
-	public class BarcodeOnClickListener implements OnClickListener
-	{
+	public class BarcodeOnClickListener implements OnClickListener {
 
 	     int barcodeNum;
 	     
@@ -383,6 +347,32 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	    	 //new BarcodeAsyncTask(barcodeNum,getApplicationContext()).execute();
 	     }
 
+	}
+
+	
+	public void showError(String error, String helpText) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		LayoutInflater li = LayoutInflater.from(this);
+		View promptsView = li.inflate(R.layout.error_message, null);
+
+		alertDialogBuilder.setView(promptsView);
+
+		final TextView details = (TextView) promptsView.findViewById(R.id.error_details);
+		final TextView help = (TextView) promptsView.findViewById(R.id.error_help);
+		details.setText(error);
+		help.setText(helpText);
+
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Try Again",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+				
+			    }
+			  });
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
 	}
 
 }

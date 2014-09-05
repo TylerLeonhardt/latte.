@@ -8,5 +8,11 @@
         android:orderInCategory="100"
         android:title="Add New Card"
         app:showAsAction="never"/>
+    
+    <item
+        android:id="@+id/send_noti"
+        android:orderInCategory="100"
+        android:title="Send to Wear"
+        app:showAsAction="never"/>
 
 </menu>
