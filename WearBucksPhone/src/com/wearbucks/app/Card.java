@@ -47,7 +47,7 @@ public class Card {
 	
 	@Override
 	public String toString() {
-		return cardNumber + ";" + colorPreference + ";" + (isDefault ? "1" : "0");
+		return cardNumber + ";" + colorPreference + ";" + (isDefault ? "1" : "0") + "*";
 	}
 
 }

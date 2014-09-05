@@ -82,11 +82,20 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         context = this;
         systemService = getSystemService(Context.NOTIFICATION_SERVICE);
         
-        activeCards = new ArrayList<Card>();	//initialize from String version in pref.
-        // Add dummy cards for testing
-        activeCards.add(new Card("1234", 0, true));
-        activeCards.add(new Card("9876", 2, false));	//just testing different ways to init with false
-        activeCards.add(new Card("5678", 1));
+        // SharedPreferences
+        pref = this.getPreferences(Context.MODE_PRIVATE);
+        editor = pref.edit();
+        
+        //editor.clear().commit();	//remove on launch
+        
+        // Run setup on first launch
+        if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
+	        //TODO: add check if already have user sharedprefs
+	        Intent intent = new Intent(this, SetupInitialActivity.class);
+	        startActivity(intent);
+        }
+        
+        initializeCards();
  
         // 1. pass context and data to the custom adapter
         adapter = new CardAdapter(this, activeCards);
@@ -96,17 +105,6 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
  
         // 3. setListAdapter
         listView.setAdapter(adapter);
- 
-        
-        pref = this.getPreferences(Context.MODE_PRIVATE);
-        editor = pref.edit();
-        
-        //editor.clear().commit();	//remove on launch
-        if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
-	        //TODO: add check if already have user sharedprefs
-	        Intent intent = new Intent(this, SetupInitialActivity.class);
-	        startActivity(intent);
-        }
         
         String nameActionBar = pref.getString(NAME, "");
         if (nameActionBar.equals("")) {
@@ -132,16 +130,56 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         //cards = (RadioGroup) findViewById(R.id.cardgroup);
     }
     
-    public void addNewCard() {
-        activeCards.add(new Card("1231", 1));
+    private void initializeCards() {
+		String current = pref.getString(LISTOFCARDS, "*");
+		System.out.println("onCreate() currently saved: " + current);
+		activeCards = new ArrayList<Card>();
+		
+		// Empty; no cards saved yet (usually not possible)
+		if (current.length() == 1) {
+		} else {
+			String[] cards = current.split("\\*");
+			
+			for (int i = 1; i < cards.length; i++) {
+				
+				// Get data from it
+				String[] cardData = cards[i].split(";");
+				boolean def = cardData[2].equals("1") ? true : false;
+				
+				System.out.println("data: " + cardData[0] + " isDefault: " + cardData[2]);
+				
+				activeCards.add(new Card(cardData[0], Integer.parseInt(cardData[1]), def));
+			}
+		}
+		
+		System.err.println("onCreate() cards: " + activeCards);
+		
+	}
+    
+    private void saveCards() {
+    	String allCards = "*";
+    	for (Card c : activeCards) {
+    		allCards = allCards + c.toString();
+    	}
+    	
+    	editor.putString(LISTOFCARDS, allCards);
+    	editor.commit();
+    	
+    	System.err.println("onDestroy() active cards: " + activeCards);
+    	System.err.println("onDestroy() saved cards: " + pref.getString(LISTOFCARDS, "none :("));
+    }
+
+	public void addNewCard() {
+		// Get from popup
+        activeCards.add(new Card("7777777777777777", 1));
         adapter.notifyDataSetChanged();
-        
-        //add new card.toString() to String version in pref
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        
+        saveCards();
     }
     
     @Override

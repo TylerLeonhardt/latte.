@@ -114,7 +114,7 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 		editor.putString(MainActivity.USERNAME, loginFragment.username);
 		editor.putString(MainActivity.PASSWORD, loginFragment.password);
 		editor.putString(MainActivity.DEFAULTCARD, addCardFragment.cardNumber);
-		editor.putString(MainActivity.LISTOFCARDS, "*" + addCardFragment.cardNumber + ";" + addCardFragment.selectedColor + "*");
+		editor.putString(MainActivity.LISTOFCARDS, "*" + addCardFragment.cardNumber + ";" + addCardFragment.selectedColor + ";1*");
 		
 		try {
 			editor.putString(MainActivity.NAME, response.getString("customer_name"));

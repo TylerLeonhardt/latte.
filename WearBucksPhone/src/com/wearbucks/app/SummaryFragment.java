@@ -62,7 +62,8 @@ public class SummaryFragment extends Fragment {
     	
     	// Set color according to selection in setup_addcard.xml
     	String listOfCards = pref.getString(MainActivity.LISTOFCARDS, null);
-    	String selectedColor = listOfCards.substring(listOfCards.indexOf(";")+1, listOfCards.indexOf("*", listOfCards.indexOf("*")+1));
+    	String selectedColor = listOfCards.substring(listOfCards.indexOf(";")+1, listOfCards.indexOf(";")+2);
+    	System.err.println("listOfCards setup: " + listOfCards + "\nfirst card selected color: " + selectedColor);
     	cardColor.setImageResource(colors.getResourceId(Integer.parseInt(selectedColor), 0));
         
     	return view;
