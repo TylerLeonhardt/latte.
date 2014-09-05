@@ -144,6 +144,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 				
 				// Get data from it
 				String[] cardData = cards[i].split(";");
+				
+				for (String s : cardData) System.out.print(" --- " + s);
+				
 				boolean def = cardData[2].equals("1") ? true : false;
 				
 				System.out.println("data: " + cardData[0] + " isDefault: " + cardData[2]);
@@ -169,9 +172,8 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     	System.err.println("onDestroy() saved cards: " + pref.getString(LISTOFCARDS, "none :("));
     }
 
-	public void addNewCard() {
-		// Get from popup
-        activeCards.add(new Card("7777777777777777", 1));
+	public void addNewCard(String cardNumber, int idx) {
+        activeCards.add(new Card(cardNumber, idx));
         adapter.notifyDataSetChanged();
     }
 
@@ -292,7 +294,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 			    	
 			    	//TODO: make a better validation check
 			    	if(cardNumber.length() < 16) {
-			    		//return false;
+			    		showError("Incorrect card", "Please check card number");
 			    	}
 			    	
 			    	int checkedButton = group.getCheckedRadioButtonId();
@@ -300,7 +302,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 			    	int idx = group.indexOfChild(radioButton);
 			    	saveNewCard(cardNumber, idx);
 			    	
-			    	addNewCard();
+			    	addNewCard(cardNumber, idx);
 			    }
 			  })
 			  .setNegativeButton("Cancel",
@@ -378,6 +380,31 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	    	 new BarcodeAsyncTask(barcodeNum,getApplicationContext()).execute();
 	     }
 
+	}
+	
+	public void showError(String error, String helpText) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		LayoutInflater li = LayoutInflater.from(this);
+		View promptsView = li.inflate(R.layout.error_message, null);
+
+		alertDialogBuilder.setView(promptsView);
+
+		final TextView details = (TextView) promptsView.findViewById(R.id.error_details);
+		final TextView help = (TextView) promptsView.findViewById(R.id.error_help);
+		details.setText(error);
+		help.setText(helpText);
+
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Try Again",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+				
+			    }
+			  });
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
 	}
 	
 	public static void sendNotification(int barcodeNumber, Bitmap barcodeImage){
