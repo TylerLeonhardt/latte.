@@ -93,7 +93,12 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	        //TODO: add check if already have user sharedprefs
 	        Intent intent = new Intent(this, SetupInitialActivity.class);
 	        startActivity(intent);
+//	        new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this).execute();
+        }else{
+        	new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
         }
+        
+        
         
         initializeCards();
  
@@ -375,49 +380,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	     @Override
 	     public void onClick(View v)
 	     {
-	    	 new BarcodeAsyncTask(barcodeNum,getApplicationContext()).execute();
+	    	 //new BarcodeAsyncTask(barcodeNum,getApplicationContext()).execute();
 	     }
 
 	}
-	
-	public static void sendNotification(int barcodeNumber, Bitmap barcodeImage){
-    	//create intents
-    	final Intent emptyIntent = new Intent();
-    	PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-    			
-    	//create big notification action
-    	//Intent dismissIntent = new Intent(this, );
-    	
-    	
-    	//expanded barcode image notification
-    	NotificationCompat.BigPictureStyle notiStyle = new 
-    	        NotificationCompat.BigPictureStyle();
-    	
-    	notiStyle.setBigContentTitle("WearBucks");
-    	notiStyle.setSummaryText("Barcode for card ending in " + ("" + barcodeNumber).substring(("" + barcodeNumber).length()-4));
-    	notiStyle.bigPicture( barcodeImage );
-    	
-    	NotificationManager notiManager = (NotificationManager) systemService;
-    	notiManager.cancel(NOTIFICATION_ID);
-    	
-    	//////
-    	PendingIntent dismissPendingIntent = PendingIntent.getActivity(context, 0, new Intent(context,
-				MainActivity.class), 0);
-    	
-    	//compact notification showing stats
-    	NotificationCompat.Builder mBuilder =
-    		    new NotificationCompat.Builder(context)
-    		    .setSmallIcon(R.drawable.wearbucks_logo)
-    		    .setContentTitle("WearBucks")
-    		    .setContentText("card (" + ("" + barcodeNumber).substring(("" + barcodeNumber).length()-4) + ")")
-    		    .setContentIntent(pendingIntent)
-    		    .setStyle(notiStyle)
-    		    //.setOngoing(true)
-    		    .addAction(R.drawable.wearbucks_logo, "dismiss", dismissPendingIntent)
-    		    ;
-    	
-    	//build and send notification
-    	notiManager.notify(NOTIFICATION_ID, mBuilder.build());
-    }
 
 }

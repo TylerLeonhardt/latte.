@@ -7,22 +7,28 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class BarcodeAsyncTask extends AsyncTask<Void, Void, Void>{
 
-	private int barcode;
+	private String barcode;
 	private Bitmap barcodeImage;
-	Context main;
+	private Context main;
+	private Object notiMan;
 	
-	public BarcodeAsyncTask(int b, Context context) {
+	public BarcodeAsyncTask(String b, Context context, Object n) {
 		// TODO Auto-generated constructor stub
 		barcode = b;
 		main = context;
+		notiMan = n;
 	}
 
 	@Override
@@ -61,8 +67,50 @@ public class BarcodeAsyncTask extends AsyncTask<Void, Void, Void>{
 	
 	@Override
     protected void onPostExecute(Void aVoid) {
-		MainActivity.sendNotification(barcode, barcodeImage);
+		sendNotification(barcode, barcodeImage);
 	}
 	
 
+	public void sendNotification(String barcodeNumber, Bitmap barcodeImage){
+    	//create intents
+    	final Intent emptyIntent = new Intent();
+    	PendingIntent pendingIntent = PendingIntent.getActivity(main, 0, emptyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    			
+    	//create big notification action
+    	//Intent dismissIntent = new Intent(this, );
+    	
+    	
+    	//expanded barcode image notification
+    	NotificationCompat.BigPictureStyle notiStyle = new 
+    	        NotificationCompat.BigPictureStyle();
+    	
+    	notiStyle.setBigContentTitle("WearBucks");
+    	notiStyle.setSummaryText("Barcode for card ending in " + ("" + barcodeNumber).substring(("" + barcodeNumber).length()-4));
+    	notiStyle.bigPicture( barcodeImage );
+    	
+    	NotificationManager notiManager = (NotificationManager) notiMan;
+    	notiManager.cancel(101);
+    	
+    	//////
+    	PendingIntent dismissPendingIntent = PendingIntent.getActivity(main, 0, new Intent(main,
+				MainActivity.class), 0);
+    	
+    	//compact notification showing stats
+    	NotificationCompat.Builder mBuilder =
+    		    new NotificationCompat.Builder(main)
+    		    .setSmallIcon(R.drawable.wearbucks_logo)
+    		    .setContentTitle("WearBucks")
+    		    .setContentText("card (" + ("" + barcodeNumber).substring(("" + barcodeNumber).length()-4) + ")")
+    		    .setContentIntent(pendingIntent)
+    		    .setStyle(notiStyle)
+    		    //.setOngoing(true)
+    		    .addAction(R.drawable.wearbucks_logo, "dismiss", dismissPendingIntent)
+    		    ;
+    	
+    	//build and send notification
+    	notiManager.notify(101, mBuilder.build());
+    }
+
+
+	
 }
