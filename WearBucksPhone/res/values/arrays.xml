@@ -7,5 +7,12 @@
         <item>@drawable/card_red</item>
         <item>@drawable/card_gold</item>
     </string-array>
+    
+    <!-- Same order as RadioGroup in setup_addcard.xml -->
+    <string-array name="card_colors_single">
+        <item>@drawable/card_green_small</item>
+        <item>@drawable/card_red_small</item>
+        <item>@drawable/card_gold_small</item>
+    </string-array>
 
 </resources>

@@ -132,7 +132,6 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     
     private void initializeCards() {
 		String current = pref.getString(LISTOFCARDS, "*");
-		System.out.println("onCreate() currently saved: " + current);
 		activeCards = new ArrayList<Card>();
 		
 		// Empty; no cards saved yet (usually not possible)
@@ -149,14 +148,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 				
 				boolean def = cardData[2].equals("1") ? true : false;
 				
-				System.out.println("data: " + cardData[0] + " isDefault: " + cardData[2]);
-				
 				activeCards.add(new Card(cardData[0], Integer.parseInt(cardData[1]), def));
 			}
-		}
-		
-		System.err.println("onCreate() cards: " + activeCards);
-		
+		}		
 	}
     
     private void saveCards() {
@@ -167,9 +161,6 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     	
     	editor.putString(LISTOFCARDS, allCards);
     	editor.commit();
-    	
-    	System.err.println("onDestroy() active cards: " + activeCards);
-    	System.err.println("onDestroy() saved cards: " + pref.getString(LISTOFCARDS, "none :("));
     }
 
 	public void addNewCard(String cardNumber, int idx) {
@@ -199,6 +190,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         int id = item.getItemId();
         if (id == R.id.new_card) {
         	showAddNewCard();
+            return true;
+        } else if (id == R.id.send_noti) {
+        	//new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this).execute();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -300,6 +294,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 			    	int checkedButton = group.getCheckedRadioButtonId();
 			    	View radioButton = group.findViewById(checkedButton);
 			    	int idx = group.indexOfChild(radioButton);
+			    	
 			    	saveNewCard(cardNumber, idx);
 			    	
 			    	addNewCard(cardNumber, idx);
@@ -339,34 +334,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	    }); 
     }
 	
-	
-// I don't even	
-	public void addCard(){
-		
-		
-		
-		String cardsString = pref.getString(LISTOFCARDS, null);
-		
-		if(cardsString != null){
-		
-		String[] cardsInfo = cardsString.split("\\*");
-		
-		//String newCard = cardsInfo[cardsInfo.length-2].split(";")[0];
-		String newCard = cardsInfo[1].substring(0, cardsInfo[1].indexOf(";"));
-		
-		RadioButton rb = new RadioButton(this);
-		rb.setId(Integer.parseInt(newCard.substring(newCard.length()-5, newCard.length())));
-		rb.setOnClickListener(new BarcodeOnClickListener(Integer.parseInt(newCard.substring(newCard.length()-5, newCard.length()))));
-		rb.setText(newCard);
-		rb.setChecked(true);
-		
-		cards.addView(rb, cards.getChildCount());
-		}
-		
-	}
-	
-	public class BarcodeOnClickListener implements OnClickListener
-	{
+	public class BarcodeOnClickListener implements OnClickListener {
 
 	     int barcodeNum;
 	     
@@ -375,8 +343,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	     }
 
 	     @Override
-	     public void onClick(View v)
-	     {
+	     public void onClick(View v) {
 	    	 new BarcodeAsyncTask(barcodeNum,getApplicationContext()).execute();
 	     }
 
