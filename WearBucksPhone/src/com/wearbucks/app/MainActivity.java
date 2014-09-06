@@ -1,5 +1,6 @@
 package com.wearbucks.app;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -198,17 +199,18 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     }
     
     private void updateDataViews() {        
-    	String getBalance = pref.getString(BALANCE, null);
-    	String balanceString;
-    	if (getBalance != null ) {
-    		Double balanceFormatted = Double.valueOf(getBalance);
-    		balanceString = String.format("%.2f", balanceFormatted);
-    	} else {
-    		balanceString = "$0.00";
-    	}
+//    	String getBalance = pref.getString(BALANCE, null);
+//    	String balanceString;
+//    	if (getBalance != null ) {
+//    		Double balanceFormatted = Double.valueOf(getBalance);
+//    		balanceString = String.format("%.2f", balanceFormatted);
+//    	} else {
+//    		balanceString = "$0.00";
+//    	}
     	
     	rewardsNumber.setText(pref.getString(REWARDS, ""));
-    	balanceNumber.setText("$" + balanceString);
+    	//balanceNumber.setText("$" + balanceString);
+    	balanceNumber.setText(pref.getString(BALANCE, "$0.00"));
     	starsNumber.setText(pref.getString(STARS, ""));
     }
     
@@ -229,9 +231,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		try {
     		
     		Double balanceFormatted = js.getDouble("dollar_balance");
-    		String balanceString = String.format("%.2f", balanceFormatted);	
+			String moneyString = NumberFormat.getCurrencyInstance().format(balanceFormatted);
     			
-			editor.putString(BALANCE, balanceString);
+			editor.putString(BALANCE, moneyString);
 			editor.putString(NAME, js.getString("customer_name"));
 			editor.putString(REWARDS, js.getString("rewards"));
 	    	String stringStars = js.getString("stars");

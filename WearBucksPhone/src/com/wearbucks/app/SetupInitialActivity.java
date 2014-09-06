@@ -1,16 +1,14 @@
 package com.wearbucks.app;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -117,10 +115,14 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 		editor.putString(MainActivity.LISTOFCARDS, "*" + addCardFragment.cardNumber + ";" + addCardFragment.selectedColor + ";1*");
 		
 		try {
+			
+			double money = Double.parseDouble(response.getString("dollar_balance"));
+			String moneyString = NumberFormat.getCurrencyInstance().format(money);
+			
 			editor.putString(MainActivity.NAME, response.getString("customer_name"));
 			editor.putString(MainActivity.STARS, response.getString("stars"));
 			editor.putString(MainActivity.REWARDS, response.getString("rewards"));
-			editor.putString(MainActivity.BALANCE, response.getString("dollar_balance").substring(0, response.getString("dollar_balance").indexOf(".") + 2));
+			editor.putString(MainActivity.BALANCE, moneyString);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -174,4 +176,6 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 	public void onEventFailed() {
 		showError("Incorrect login", "Please check username and password");
 	}
+	
+	
 }
