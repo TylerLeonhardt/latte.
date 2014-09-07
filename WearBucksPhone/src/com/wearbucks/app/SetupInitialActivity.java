@@ -175,6 +175,7 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 	@Override
 	public void onEventFailed() {
 		showError("Incorrect login", "Please check username and password");
+		loginFragment.enableButtons();
 	}
 	
 	

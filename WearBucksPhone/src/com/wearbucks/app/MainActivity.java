@@ -88,12 +88,11 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	        //TODO: add check if already have user sharedprefs
 	        Intent intent = new Intent(this, SetupInitialActivity.class);
 	        startActivity(intent);
-//	        new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this).execute();
+
         }else{
         	new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
+        	
         }
-        
-        
         
         initializeCards();
  
@@ -127,7 +126,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
           .listener(this)
           .setup(mPullToRefreshLayout);
         
-        //cards = (RadioGroup) findViewById(R.id.cardgroup);
+        
     }
     
     private void initializeCards() {
@@ -333,22 +332,6 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 	        public void onTextChanged(CharSequence s, int start, int before, int count) {}
 	    }); 
-    }
-	
-	public class BarcodeOnClickListener implements OnClickListener {
-
-	     int barcodeNum;
-	     
-	     public BarcodeOnClickListener(int n) {
-	          barcodeNum = n;
-	     }
-
-	     @Override
-	     public void onClick(View v)
-	     {
-	    	 //new BarcodeAsyncTask(barcodeNum,getApplicationContext()).execute();
-	     }
-
 	}
 
 	
@@ -375,6 +358,37 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
+	}
+	
+	public void makeDefault(View v){
+		
+		TextView cardShort = (TextView) ((View) v.getParent()).findViewById(R.id.card_short_number);
+		
+		for(Card c: activeCards){
+			//Checks if the button corresponds to a certain card
+			if(cardShort.getText().toString().equals(c.getShortNumber())){
+				
+				//If it's not the default...
+				if(!c.isDefault()){
+					//set all to false (there is some optimization here)
+					for(Card d : activeCards) d.setDefault(false);
+					
+					//set the new default
+					c.setDefault(true);
+					
+					//save the data
+					editor.putString(DEFAULTCARD, c.getCardNumber());
+					saveCards();
+					
+					//create the new notification
+					new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
+					
+				}else{
+					//if it is the default, send a notification
+					new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
+				}
+			}
+		}
 	}
 
 }
