@@ -34,7 +34,7 @@
         android:paddingLeft="15dp" />
     
     <Button 
-        android:id="@+id/default_button"
+        android:id="@+id/default_button_single_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"

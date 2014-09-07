@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,6 +42,25 @@ public class CardAdapter extends ArrayAdapter<Card> {
 
         // 4. Set the text for textView 
         labelView.setText(itemsArrayList.get(position).getShortNumber());
+        
+        
+        
+        // 4.5. Change default color
+        Button defaultButton = (Button) rowView.findViewById(R.id.default_button_single_card);
+        
+        if(itemsArrayList.get(position).isDefault()){
+        	System.out.println("is");
+        	defaultButton.setTextColor(context.getResources().getColor(R.color.dark_green));
+        	defaultButton.setTypeface(null, Typeface.BOLD);
+        	
+        }else{
+        	System.out.println("isn't");
+        	defaultButton.setTextColor(context.getResources().getColor(R.color.light_grey));
+        	defaultButton.setTypeface(null, Typeface.NORMAL);
+        	//android:textStyle="bold"
+        }
+        
+        
         
         // 5. Set the color drawable
         TypedArray colors = context.getResources().obtainTypedArray(R.array.card_colors_single);

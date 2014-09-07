@@ -380,6 +380,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 					editor.putString(DEFAULTCARD, c.getCardNumber());
 					saveCards();
 					
+					adapter.notifyDataSetChanged();
 					//create the new notification
 					new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
 					
