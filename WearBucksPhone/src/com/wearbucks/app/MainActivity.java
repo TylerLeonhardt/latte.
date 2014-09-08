@@ -191,7 +191,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         	showAddNewCard();
             return true;
         } else if (id == R.id.send_noti) {
-        	//new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this).execute();
+        	new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
             return true;
         }
         return super.onOptionsItemSelected(item);
