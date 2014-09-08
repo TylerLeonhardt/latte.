@@ -313,7 +313,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	
 	public void saveNewCard(String cardNumber, int colorIndex) {
 		String currentCards = pref.getString(LISTOFCARDS, "*");
-		currentCards = currentCards + cardNumber + ";" + colorIndex + "*";
+		currentCards = currentCards + cardNumber + ";" + colorIndex + ";0*";
 		
 		editor.putString(LISTOFCARDS, currentCards);
 		editor.commit();
