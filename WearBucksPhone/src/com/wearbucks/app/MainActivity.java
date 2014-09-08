@@ -276,7 +276,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 
 		alertDialogBuilder
 			.setCancelable(false)
-			.setPositiveButton("Add Card",
+			.setNeutralButton("Add Card",
 			  new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog,int id) {
 			    	String cardSegment1 = cardNumber1.getText().toString();
@@ -289,15 +289,17 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 			    	//TODO: make a better validation check
 			    	if(cardNumber.length() < 16) {
 			    		showError("Incorrect card", "Please check card number");
+			    	} else {
+			    	
+				    	int checkedButton = group.getCheckedRadioButtonId();
+				    	View radioButton = group.findViewById(checkedButton);
+				    	int idx = group.indexOfChild(radioButton);
+				    	
+				    	saveNewCard(cardNumber, idx);
+				    	
+				    	addNewCard(cardNumber, idx);
+				    	dialog.dismiss();
 			    	}
-			    	
-			    	int checkedButton = group.getCheckedRadioButtonId();
-			    	View radioButton = group.findViewById(checkedButton);
-			    	int idx = group.indexOfChild(radioButton);
-			    	
-			    	saveNewCard(cardNumber, idx);
-			    	
-			    	addNewCard(cardNumber, idx);
 			    }
 			  })
 			  .setNegativeButton("Cancel",
@@ -352,7 +354,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 			.setPositiveButton("Try Again",
 			  new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog,int id) {
-				
+			    	showAddNewCard();
 			    }
 			  });
 
