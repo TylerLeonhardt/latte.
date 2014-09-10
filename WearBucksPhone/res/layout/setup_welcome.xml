@@ -13,8 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Wearbucks"
-        android:textSize="26dp"
+        android:text="latte."
+        android:textSize="62dp"
         android:layout_marginTop="40dp"
         />
     
