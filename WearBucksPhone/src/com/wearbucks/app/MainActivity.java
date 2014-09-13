@@ -22,11 +22,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends ListActivity implements OnRefreshListener, RequestEventListener{
@@ -44,7 +44,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	public static String LISTOFCARDS = "listofcards";	//format: "*16DigitCardNumber;CustomColor*16DigitCardNumber;CustomColor*"
 	
 	// Actual list of cards storing locally
-	public ArrayList<Card> activeCards;
+	public static ArrayList<Card> activeCards;
 	
 	public static SharedPreferences pref;
 	public static SharedPreferences.Editor editor;
@@ -68,7 +68,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     public ArrayList<String> list;
  
     /** Declaring an ArrayAdapter to set items to ListView */
-    public CardAdapter adapter;
+    public static CardAdapter adapter;
+    
+    public ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +102,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         adapter = new CardAdapter(this, activeCards);
  
         // 2. Get ListView from activity_main.xml
-        ListView listView = (ListView) findViewById(android.R.id.list);
+        listView = (ListView) findViewById(android.R.id.list);
  
         // 3. setListAdapter
         listView.setAdapter(adapter);
@@ -152,7 +154,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		}		
 	}
     
-    private void saveCards() {
+    private static void saveCards() {
     	String allCards = "*";
     	for (Card c : activeCards) {
     		allCards = allCards + c.toString();
@@ -162,9 +164,51 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     	editor.commit();
     }
 
-	public void addNewCard(String cardNumber, int idx) {
-        activeCards.add(new Card(cardNumber, idx));
+	public static void addNewCard(String cardNumber, int idx) {
+        if (activeCards.size() == 0) {
+        	activeCards.add(new Card(cardNumber, idx, true));
+        } else {
+        	activeCards.add(new Card(cardNumber, idx));
+        }
         adapter.notifyDataSetChanged();
+    }
+	
+	public static void deleteCard(final String cardNumber) {
+		
+		if (activeCards.size() == 1) {
+			showDeleteError("Error", "Can't remove your only card!");
+		} else {
+			new AlertDialog.Builder(context)
+		    .setTitle("Removing card")
+		    .setMessage("Are you sure you want to remove this card from latte.?")
+		    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) { 
+		        	for(Card c : activeCards) {
+		    			if(c.getShortNumber().equals(cardNumber)) {
+		    				activeCards.remove(c);
+		    				
+		    				//make the next card a default automatically
+		    				if (c.isDefault() && !activeCards.isEmpty()) {
+		    					setDefault(activeCards.get(0));
+		    				}
+		    				
+		    				break;
+		    				
+		    			}
+		    		}
+		    		
+		    		saveCards();
+		    		adapter.notifyDataSetChanged();
+		        }
+		     })
+		    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) { 
+		            // do nothing
+		        }
+		     })
+		    .setIcon(android.R.drawable.ic_dialog_alert)
+		    .show();
+		}
     }
 
     @Override
@@ -251,9 +295,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	@Override
 	public void onEventFailed() {}
 	
-	public void showAddNewCard() {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-		LayoutInflater li = LayoutInflater.from(this);
+	public static void showAddNewCard() {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.add_new_card, null);
 		
 		View cardView = promptsView.findViewById(R.id.add_new_card_generic_popup); 
@@ -313,7 +357,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		alertDialog.show();
 	}
 	
-	public void saveNewCard(String cardNumber, int colorIndex) {
+	public static void saveNewCard(String cardNumber, int colorIndex) {
 		String currentCards = pref.getString(LISTOFCARDS, "*");
 		currentCards = currentCards + cardNumber + ";" + colorIndex + ";0*";
 		
@@ -337,9 +381,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	}
 
 	
-	public void showError(String error, String helpText) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-		LayoutInflater li = LayoutInflater.from(this);
+	public static void showError(String error, String helpText) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.error_message, null);
 
 		alertDialogBuilder.setView(promptsView);
@@ -362,6 +406,50 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		alertDialog.show();
 	}
 	
+	public static void showDeleteError(String error, String helpText) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		LayoutInflater li = LayoutInflater.from(context);
+		View promptsView = li.inflate(R.layout.error_message, null);
+
+		alertDialogBuilder.setView(promptsView);
+
+		final TextView details = (TextView) promptsView.findViewById(R.id.error_details);
+		final TextView help = (TextView) promptsView.findViewById(R.id.error_help);
+		details.setText(error);
+		help.setText(helpText);
+
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Okay",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+			    }
+			  });
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
+	
+	public static void setDefault(Card card) {
+		//set all to false (there is some optimization here)
+		for(Card d : activeCards) d.setDefault(false);
+		
+		//set the new default
+		card.setDefault(true);
+		
+		//save the data
+		editor.putString(DEFAULTCARD, card.getCardNumber());
+		saveCards();
+		
+		adapter.notifyDataSetChanged();
+		
+
+		Toast.makeText(context, "Default card set!", Toast.LENGTH_SHORT).show();
+		
+		//create the new notification
+		new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), context, systemService).execute();
+	}
+	
 	public void makeDefault(View v){
 		
 		TextView cardShort = (TextView) ((View) v.getParent()).findViewById(R.id.card_short_number);
@@ -372,19 +460,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 				
 				//If it's not the default...
 				if(!c.isDefault()){
-					//set all to false (there is some optimization here)
-					for(Card d : activeCards) d.setDefault(false);
-					
-					//set the new default
-					c.setDefault(true);
-					
-					//save the data
-					editor.putString(DEFAULTCARD, c.getCardNumber());
-					saveCards();
-					
-					adapter.notifyDataSetChanged();
-					//create the new notification
-					new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
+					setDefault(c);
 					
 				}else{
 					//if it is the default, send a notification
@@ -393,5 +469,4 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 			}
 		}
 	}
-
 }

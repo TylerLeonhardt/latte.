@@ -16,86 +16,71 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 
 import android.os.AsyncTask;
 
-public class AccountAsyncTask extends AsyncTask<Void, Void, Void>{
+public class AccountAsyncTask extends AsyncTask<Void, Void, Void> {
 
-	
 	private RequestEventListener callback;
 	private String response, request;
-	private PullToRefreshLayout mPullToRefreshLayout;
-	
-    public AccountAsyncTask(RequestEventListener cb, String r, PullToRefreshLayout ptl) {
-        callback = cb;
-        request = r;
-        mPullToRefreshLayout = ptl;
-    }
+	private PullToRefreshLayout pullToRefreshLayout;
 
-    @Override
-    protected void onPostExecute(Void aVoid) {
-    	
-    	JSONObject js = null;
-    	String s = null;
+	public AccountAsyncTask(RequestEventListener callback, String request, PullToRefreshLayout pullToRefresh) {
+		this.callback = callback;
+		this.request = request;
+		this.pullToRefreshLayout = pullToRefresh;
+	}
+
+	@Override
+	protected void onPostExecute(Void aVoid) {
+
+		JSONObject js = null;
+		String s = null;
 		try {
 			js = new JSONObject(response);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	try {
 			s = js.getString("error");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
-        if(callback != null) {
-        	if(s == "false"){
-        		callback.onEventCompleted(js);
-        	}else{
-        		callback.onEventFailed();
-        	}
-        }
-        if(mPullToRefreshLayout != null) mPullToRefreshLayout.setRefreshComplete();
-    }
+		
+		if (callback != null) {
+			if (s.equals("false")) {
+				callback.onEventCompleted(js);
+			} else {
+				callback.onEventFailed();
+			}
+		}
+		
+		if (pullToRefreshLayout != null) {
+			pullToRefreshLayout.setRefreshComplete();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Void doInBackground(Void... params) {
-		// TODO Auto-generated method stub
 		DefaultHttpClient client = new DefaultHttpClient();
-    	
-    	HttpPost httpost = new HttpPost("http://aqueous-reaches-7492.herokuapp.com/account");
-    	
-    	System.out.println(request);
-    	
-    	StringEntity se = null;
+		HttpPost httpost = new HttpPost("http://aqueous-reaches-7492.herokuapp.com/account");
+		ResponseHandler<String> responseHandler = new BasicResponseHandler();
+		
+		StringEntity se = null;
+		String hr = null;
+		
 		try {
 			se = new StringEntity(request);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
-    	httpost.setEntity(se);
-    	
-    	httpost.setHeader("Accept", "application/json");
-        httpost.setHeader("Content-type", "application/json");
-        
-        ResponseHandler<String> responseHandler = new BasicResponseHandler();
-        
-        String hr = null;
+
+		httpost.setEntity(se);
+		httpost.setHeader("Accept", "application/json");
+		httpost.setHeader("Content-type", "application/json");
+
 		try {
 			hr = client.execute(httpost, responseHandler);
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        
-        System.out.println(hr);
-        response = hr;
-        
+
+		response = hr;
+
 		return null;
 	}
 }

@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class WelcomeFragment extends Fragment {
-	
+
 	public View view;
-	
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return view = inflater.inflate(R.layout.setup_welcome, container, false);
-    }
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return view = inflater.inflate(R.layout.setup_welcome, container, false);
+	}
 }

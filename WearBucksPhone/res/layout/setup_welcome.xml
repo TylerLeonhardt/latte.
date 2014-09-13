@@ -8,14 +8,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.wearbucks.app.MainActivity" >
     
-     <TextView
+     <ImageView
         android:id="@+id/welcome_text"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:padding="30dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/latte_logo" 
         android:layout_centerHorizontal="true"
-        android:text="Wearbucks"
-        android:textSize="26dp"
-        android:layout_marginTop="40dp"
         />
     
     <RelativeLayout

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="15dp"
@@ -33,16 +32,26 @@
         android:layout_centerVertical="true"
         android:paddingLeft="15dp" />
     
+    <Button
+        android:id="@+id/delete_button_single_card"
+	    android:layout_width="35dp" 
+	    android:layout_height="35dp" 
+	    android:background="@drawable/delete"
+	    android:text=""
+	    android:layout_alignParentRight="true"
+	    android:layout_centerVertical="true"
+	    android:layout_marginLeft="10dp" />
+    
     <Button 
         android:id="@+id/default_button_single_card"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/default_star"
         android:textAllCaps="true"
         android:textColor="@color/light_grey" 
-        android:text="default"
-        android:layout_alignParentRight="true"
+        android:text=""
+        android:layout_toLeftOf="@id/delete_button_single_card"
         android:layout_centerVertical="true"
-        android:onClick="makeDefault"/>
- 
+        android:onClick="makeDefault" />
+
 </RelativeLayout>
