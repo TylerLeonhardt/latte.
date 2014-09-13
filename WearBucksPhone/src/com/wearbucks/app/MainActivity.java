@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -106,6 +107,10 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
  
         // 3. setListAdapter
         listView.setAdapter(adapter);
+        
+        // Set listview's footer for copyright info
+        View footerView = ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.copyright_footer, null, false);
+        listView.addFooterView(footerView);
         
         String nameActionBar = pref.getString(NAME, "");
         if (nameActionBar.equals("")) {
