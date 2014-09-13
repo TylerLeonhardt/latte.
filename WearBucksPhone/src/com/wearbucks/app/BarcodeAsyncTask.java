@@ -92,7 +92,7 @@ public class BarcodeAsyncTask extends AsyncTask<Void, Void, Void> {
 
 		// Compact notification showing stats
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(main)
-				.setSmallIcon(R.drawable.wearbucks_logo)
+				.setSmallIcon(R.drawable.latte_icon)
 				.setContentTitle("latte.")
 				.setContentText(
 						"card ("
