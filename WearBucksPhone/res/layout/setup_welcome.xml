@@ -15,8 +15,7 @@
         android:padding="30dp"
         android:scaleType="fitXY"
         android:src="@drawable/latte_logo" 
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_centerHorizontal="true" />
     
     <RelativeLayout
 	         android:id="@+id/step_one"

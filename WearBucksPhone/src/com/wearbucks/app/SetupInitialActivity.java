@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -49,6 +52,13 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 			ft.replace(R.id.frame_location, new WelcomeFragment());
 			ft.commit();
 		}
+//        SpannableString s = new SpannableString("latte.");
+//        s.setSpan(new TypefaceSpan(this, "orator.ttf"), 0, s.length(),
+//                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Update the action bar title with the TypefaceSpan instance
+//        ActionBar actionBar = getActionBar();
+//        actionBar.setTitle(s);
 	}
 
 	/**

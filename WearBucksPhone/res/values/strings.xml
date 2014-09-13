@@ -2,6 +2,10 @@
 <resources>
 
     <string name="app_name">latte.</string>
+<<<<<<< HEAD
+=======
+    <string name="hello_world">Hello world!</string>
+>>>>>>> 5f552251b7e09492629162832708505da4a785a7
     <string name="action_settings">Settings</string>
 
 </resources>
