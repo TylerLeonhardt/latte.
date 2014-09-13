@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="orange">#ff5500</color>
 	<color name="white">#ffffff</color>
 	<color name="transparent">#00000000</color>
 	<color name="date_color">#999999</color>
 	<color name="black">#000000</color>
 	<color name="gray">#999999</color>
 	<color name="blue">#0066cc</color>
-	<color name="gold">#e6b121</color>
 	<color name="blueback">#99FFFF</color>
 	<color name="articlecolor">#3399FF</color> 
 	<color name="article_title">#3399FF</color> 
@@ -15,8 +13,33 @@
 	
 	<color name="light_grey">#8C8C8C</color>
 	<color name="dark_green">#008000</color>
-	<color name="red">#F00018</color>
 	<color name="coffee_green">#3bc678</color>
 	
 	<!-- card colors -->
+	<color name="green">#2AB62A</color>
+	<color name="green_selected">#1B791B</color>
+	
+	<color name="teal">#208989</color>
+	<color name="teal_selected">#114A4A</color>
+	
+	<color name="orange">#E48435</color>
+	<color name="orange_selected">#9D5215</color>
+	
+	<color name="red">#E43535</color>
+	<color name="red_selected">#9D1515</color>
+	
+	<color name="dark_blue">#304F99</color>
+	<color name="dark_blue_selected">#1D325D</color>
+	
+	<color name="gold">#E4A935</color>
+	<color name="gold_selected">#B48018</color>
+	
+	<color name="yellow">#E4C635</color>
+	<color name="yellow_selected">#B49A18</color>
+	
+	<color name="purple">#712998</color>
+	<color name="purple_selected">#541E71</color>
+	
+	<color name="grey">#999999</color>
+	<color name="grey_selected">#737373</color>
 </resources>

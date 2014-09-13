@@ -1,128 +1,173 @@
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-<TextView
+    android:layout_height="wrap_content" >
+
+    <TextView
         android:id="@+id/addcard_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Starbucks Card"
-        android:textAppearance="?android:attr/textAppearanceLarge" 
         android:layout_centerHorizontal="true"
-        />
-        
+        android:text="Add Starbucks Card"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <RelativeLayout
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/addcard_title"
-	    android:layout_centerHorizontal="true"
-	    android:layout_marginTop="30dp"
-	    android:id="@+id/card_input_layout"
-	    >
- 
-    <EditText
-        android:id="@+id/card_input_1"
+        android:id="@+id/card_input_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="####"
-        android:maxLength="4"
-        android:inputType="number"
-        >
- 
-        <requestFocus />
- 
-    </EditText>
-    
-    <TextView
-        android:id="@+id/card_dash_1"
-        android:layout_toRightOf="@id/card_input_1"
-        android:text="-"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_centerVertical="true"
-        />
-    
-    <EditText
-        android:id="@+id/card_input_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="####"
-        android:layout_toRightOf="@id/card_dash_1"
-        android:maxLength="4"
-        android:inputType="number"
-        />
-    
-    <TextView
-        android:id="@+id/card_dash_2"
-        android:layout_toRightOf="@id/card_input_2"
-        android:text="-"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_centerVertical="true"
-        />
-    
-    <EditText
-        android:id="@+id/card_input_3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="####" 
-        android:layout_toRightOf="@id/card_dash_2"
-        android:maxLength="4"
-        android:inputType="number"
-        />
-    
-    <TextView
-        android:id="@+id/card_dash_3"
-        android:layout_toRightOf="@id/card_input_3"
-        android:text="-"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_centerVertical="true"
-        />
-    
-    <EditText
-        android:id="@+id/card_input_4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="####"
-        android:layout_toRightOf="@id/card_dash_3"
-        android:maxLength="4"
-        android:inputType="number"
-        />
-    
+        android:layout_below="@id/addcard_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" >
+
+        <EditText
+            android:id="@+id/card_input_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="####"
+            android:inputType="number"
+            android:maxLength="4" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/card_dash_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/card_input_1"
+            android:text="-" />
+
+        <EditText
+            android:id="@+id/card_input_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/card_dash_1"
+            android:hint="####"
+            android:inputType="number"
+            android:maxLength="4" />
+
+        <TextView
+            android:id="@+id/card_dash_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/card_input_2"
+            android:text="-" />
+
+        <EditText
+            android:id="@+id/card_input_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/card_dash_2"
+            android:hint="####"
+            android:inputType="number"
+            android:maxLength="4" />
+
+        <TextView
+            android:id="@+id/card_dash_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/card_input_3"
+            android:text="-" />
+
+        <EditText
+            android:id="@+id/card_input_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/card_dash_3"
+            android:hint="####"
+            android:inputType="number"
+            android:maxLength="4" />
     </RelativeLayout>
     
+    <TextView
+        android:id="@+id/addcard_color"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:text="Custom color:"
+        android:textSize="12dp"
+        android:textColor="@color/light_grey"
+        android:textStyle="italic"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_below="@id/card_input_layout"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="15dp" />
+
     <RadioGroup
-	    android:id="@+id/card_color_group"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" 
-	    android:layout_alignParentLeft="true"
-	    android:layout_marginTop="30dp"
-	    android:layout_marginLeft="15dp"
-	    android:layout_below="@id/card_input_layout" >
-	
-	    <RadioButton
-	        android:id="@+id/color0"
-	        android:layout_width="30dp"
-	        android:layout_height="30dp"
-	        android:checked="true"
-	        android:background="@drawable/color_radio_button_selector_green"
-	        android:button="@null" />
-	
-	    <RadioButton
-	        android:id="@+id/color1"
-	        android:layout_width="30dp"
-	        android:layout_height="30dp"
-	        android:background="@drawable/color_radio_button_selector_red"
-	        android:button="@null" />
-	    
-	    <RadioButton
-	        android:id="@+id/color2"
-	        android:layout_width="30dp"
-	        android:layout_height="30dp"
-	        android:background="@drawable/color_radio_button_selector_gold"
-	        android:button="@null" />
-	    
-	</RadioGroup>
-	</RelativeLayout>
+        android:id="@+id/card_color_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/addcard_color"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/color0"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_purple"
+            android:button="@null"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/color1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_dark_blue"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/color2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_teal"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/color3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_green"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/color4"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_red"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/color5"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_orange"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/color6"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_gold"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/color7"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_yellow"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/color8"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/color_radio_button_selector_grey"
+            android:button="@null" />
+    </RadioGroup>
+
+</RelativeLayout>

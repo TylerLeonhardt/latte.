@@ -1,9 +1,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"> 
-	 <stroke android:width="2dp" android:color="#004D00" /> 
+	 <stroke android:width="2dp" android:color="@color/green_selected" /> 
 	 <padding android:left="7dp" android:top="7dp" 
 	   android:right="7dp" android:bottom="7dp" /> 
 	 <corners android:radius="0dp" /> 
-	 <solid android:color="@color/dark_green"/> 
+	 <solid android:color="@color/green"/> 
 </shape> 
 
 

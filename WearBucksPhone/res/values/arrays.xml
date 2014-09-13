@@ -3,16 +3,27 @@
 
     <!-- Same order as RadioGroup in setup_addcard.xml -->
     <string-array name="card_colors">
+        <item>@drawable/card_purple</item>
+        <item>@drawable/card_dark_blue</item>
+        <item>@drawable/card_teal</item>
         <item>@drawable/card_green</item>
         <item>@drawable/card_red</item>
+        <item>@drawable/card_orange</item>
         <item>@drawable/card_gold</item>
+        <item>@drawable/card_yellow</item>
+        <item>@drawable/card_grey</item>
     </string-array>
     
     <!-- Same order as RadioGroup in setup_addcard.xml -->
     <string-array name="card_colors_single">
+        <item>@drawable/card_purple_small</item>
+        <item>@drawable/card_dark_blue_small</item>
+        <item>@drawable/card_teal_small</item>
         <item>@drawable/card_green_small</item>
         <item>@drawable/card_red_small</item>
+        <item>@drawable/card_orange_small</item>
         <item>@drawable/card_gold_small</item>
+        <item>@drawable/card_yellow_small</item>
+        <item>@drawable/card_grey_small</item>
     </string-array>
-
 </resources>
