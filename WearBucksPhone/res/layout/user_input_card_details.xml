@@ -7,7 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Add Starbucks Card"
+        android:text="@string/add_card_title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <RelativeLayout
@@ -22,7 +22,7 @@
             android:id="@+id/card_input_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="####"
+            android:hint="@string/add_card_placeholder"
             android:inputType="number"
             android:maxLength="4" >
 
@@ -35,14 +35,14 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/card_input_1"
-            android:text="-" />
+            android:text="@string/add_card_seperator" />
 
         <EditText
             android:id="@+id/card_input_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/card_dash_1"
-            android:hint="####"
+            android:hint="@string/add_card_placeholder"
             android:inputType="number"
             android:maxLength="4" />
 
@@ -52,14 +52,14 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/card_input_2"
-            android:text="-" />
+            android:text="@string/add_card_seperator" />
 
         <EditText
             android:id="@+id/card_input_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/card_dash_2"
-            android:hint="####"
+            android:hint="@string/add_card_placeholder"
             android:inputType="number"
             android:maxLength="4" />
 
@@ -69,14 +69,14 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/card_input_3"
-            android:text="-" />
+            android:text="@string/add_card_seperator" />
 
         <EditText
             android:id="@+id/card_input_4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/card_dash_3"
-            android:hint="####"
+            android:hint="@string/add_card_placeholder"
             android:inputType="number"
             android:maxLength="4" />
     </RelativeLayout>
@@ -86,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:text="Custom color:"
+        android:text="@string/add_card_custom_color"
         android:textSize="12dp"
         android:textColor="@color/light_grey"
         android:textStyle="italic"

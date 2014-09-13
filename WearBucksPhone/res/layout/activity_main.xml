@@ -20,7 +20,6 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text=""
             android:textColor="@color/white"
             android:textSize="75dp" />
 
@@ -57,7 +56,6 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@id/rewards_image_main"
-                    android:text=""
                     android:textColor="@color/white"
                     android:textSize="55dp" />
             </RelativeLayout>

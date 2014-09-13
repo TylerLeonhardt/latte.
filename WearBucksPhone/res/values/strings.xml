@@ -3,5 +3,42 @@
 
     <string name="app_name">latte.</string>
     <string name="action_settings">Settings</string>
+    
+    <!-- Navigation -->
+    <string name="back_button">Back</string>
+    <string name="finish_button">Finish</string>
+    <string name="login_button">Login</string>
+    
+    <!-- Welcome Fragment -->
+    <string name="welcome_step1">Log into Starbucks account</string>
+    <string name="welcome_step2">Add first Starbucks card</string>
+    <string name="welcome_step3">Enjoy on Wear!</string>
+    <string name="welcome_continue_button">Let\'s Go!</string>
+    
+    <!-- Login Fragment -->
+    <string name="login_email">Starbucks email</string>
+    <string name="login_password">Starbucks password</string>
+    
+    <!-- Add Card Fragment -->
+    <string name="add_card_title">Add Starbucks Card</string>
+    <string name="add_card_placeholder">####</string>
+    <string name="add_card_seperator">-</string>
+    <string name="add_card_custom_color">Custom color:</string>
+    <string name="add_card_add_button">Add Card</string>
+    
+    <!-- Summary Fragment -->
+    <string name="summary_review">Review your account information then click finish to go to the app!</string>
+    
+    <!-- About Page -->
+    <string name="about_credits_title">Credits</string>
+    <string name="about_credits">Pull to Refresh library by Chris Banes\nlatte. API based off API by Stephen V\nStarbucks balance API by Justin Martin</string>
+    <string name="about_copyright_title">Privacy \u0026 Copyright</string>
+    <string name="about_copyright_details">We value your privacy and promise never to sell or share your data. We use only secure APIs to retrieve your Starbucks information and never store it on our servers.\n\nCopyright \u00a9 2014 Tyler Leonhardt and Isabella Moreira under the MIT license.</string>
+    <string name="about_developers">Developed by Tyler Leonhardt and Isabella Moreira.</string>
+    <string name="about_developers_title">Developers</string>
+    <string name="about_details">latte. lets you pay for Starbucks just by scanning your Android Wear device."</string>
+    
+    <!-- Copyright Footer -->
+    <string name="copyright_description">Pay for Starbucks with Android Wear. Copyright \u00a9 2014.</string>
 
 </resources>

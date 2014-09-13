@@ -37,7 +37,6 @@
 	    android:layout_width="35dp" 
 	    android:layout_height="35dp" 
 	    android:background="@drawable/delete"
-	    android:text=""
 	    android:layout_alignParentRight="true"
 	    android:layout_centerVertical="true"
 	    android:layout_marginLeft="10dp" />
@@ -49,7 +48,6 @@
         android:background="@drawable/default_star"
         android:textAllCaps="true"
         android:textColor="@color/light_grey" 
-        android:text=""
         android:layout_toLeftOf="@id/delete_button_single_card"
         android:layout_centerVertical="true"
         android:onClick="makeDefault" />
