@@ -74,7 +74,7 @@ import android.widget.TextView;
 
 		@Override
 		public void onClick(View v) {
-			MainActivity.deleteCard(shortNum);
+			CardManager.deleteCard(shortNum);
 		}
 
 	};

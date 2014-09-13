@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -27,66 +27,58 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
+@SuppressLint("InflateParams")
 public class MainActivity extends ListActivity implements OnRefreshListener, RequestEventListener{
 	
-	// User's credentials to index database
-	public static String NAME = "name";
-	public static String REWARDS = "rewards";
-	public static String STARS = "stars";
-	public static String BALANCE = "balance";
+	public static final String NAME = "name";
+	public static final String REWARDS = "rewards";
+	public static final String STARS = "stars";
+	public static final String BALANCE = "balance";
+	public static final String USERNAME = "username";
+	public static final String PASSWORD = "password";
+	public static final String DEFAULTCARD = "dcard";	
+	public static final String LISTOFCARDS = "listofcards"; //format: "*16DigitCardNumber;CustomColor;isDefault*16DigitCardNumber;CustomColor;isDefault*"
 	
-	public static String USERNAME = "username";
-	public static String PASSWORD = "password";
-	public static String DEFAULTCARD = "dcard";	
-	// Stores a set of Card
-	public static String LISTOFCARDS = "listofcards";	//format: "*16DigitCardNumber;CustomColor*16DigitCardNumber;CustomColor*"
+	//for sending notifications
+	public final static int NOTIFICATION_ID = 12341234;
 	
-	// Actual list of cards storing locally
-	public static ArrayList<Card> activeCards;
-	
+	//for accessing shared prefs
 	public static SharedPreferences pref;
 	public static SharedPreferences.Editor editor;
 	
-	public final static int NOTIFICATION_ID = 12;
-	
-	public TextView temp;
-	private PullToRefreshLayout mPullToRefreshLayout;
-	
-	// Layout elements
-	public TextView rewardsNumber;
-	public TextView starsNumber;
-	public TextView balanceNumber;
-	
-	public RadioGroup cards;
-	
+	//For misc services
 	public static Context context;
 	public static Object systemService;
 	
-	/** Items entered by the user is stored in this ArrayList variable */
-    public ArrayList<String> list;
- 
-    /** Declaring an ArrayAdapter to set items to ListView */
+	// Actual list of cards storing locally and it's listview adapter
+	public static ArrayList<Card> activeCards;
     public static CardAdapter adapter;
-    
-    public ListView listView;
+	
+    //layouts and views
+	private PullToRefreshLayout mPullToRefreshLayout;
+	private TextView rewardsNumber;
+	private TextView starsNumber;
+	private TextView balanceNumber;
+    private ListView listView;
 
+    /***************************************/
+    /**            Overrides              **/
+    /***************************************/
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        //important variables set
         context = this;
         systemService = getSystemService(Context.NOTIFICATION_SERVICE);
-        
-        // SharedPreferences
         pref = this.getPreferences(Context.MODE_PRIVATE);
         editor = pref.edit();
-        
-        //editor.clear().commit();	//remove on launch
-        
-        // Run setup on first launch
+    
+        // If no data exists in Shared prefs, then start the Setup Activity. Else send a notification
         if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {        
 	        //TODO: add check if already have user sharedprefs
 	        Intent intent = new Intent(this, SetupInitialActivity.class);
@@ -97,21 +89,13 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         	
         }
         
-        initializeCards();
+        //creates the card array list
+        CardManager.initializeCards();
  
-        // 1. pass context and data to the custom adapter
-        adapter = new CardAdapter(this, activeCards);
- 
-        // 2. Get ListView from activity_main.xml
-        listView = (ListView) findViewById(android.R.id.list);
- 
-        // 3. setListAdapter
-        listView.setAdapter(adapter);
+        //sets up the adapter
+        setupListView();
         
-        // Set listview's footer for copyright info
-        View footerView = ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.copyright_footer, null, false);
-        listView.addFooterView(footerView);
-        
+        //changes the action bar
         String nameActionBar = pref.getString(NAME, "");
         if (nameActionBar.equals("")) {
         	getActionBar().setTitle("  Welcome!");
@@ -135,92 +119,12 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         
         
     }
-    
-    private void initializeCards() {
-		String current = pref.getString(LISTOFCARDS, "*");
-		activeCards = new ArrayList<Card>();
-		
-		// Empty; no cards saved yet (usually not possible)
-		if (current.length() == 1) {
-		} else {
-			String[] cards = current.split("\\*");
-			
-			for (int i = 1; i < cards.length; i++) {
-				
-				// Get data from it
-				String[] cardData = cards[i].split(";");
-				
-				for (String s : cardData) System.out.print(" --- " + s);
-				
-				boolean def = cardData[2].equals("1") ? true : false;
-				
-				activeCards.add(new Card(cardData[0], Integer.parseInt(cardData[1]), def));
-			}
-		}		
-	}
-    
-    private static void saveCards() {
-    	String allCards = "*";
-    	for (Card c : activeCards) {
-    		allCards = allCards + c.toString();
-    	}
-    	
-    	editor.putString(LISTOFCARDS, allCards);
-    	editor.commit();
-    }
-
-	public static void addNewCard(String cardNumber, int idx) {
-        if (activeCards.size() == 0) {
-        	activeCards.add(new Card(cardNumber, idx, true));
-        } else {
-        	activeCards.add(new Card(cardNumber, idx));
-        }
-        adapter.notifyDataSetChanged();
-    }
-	
-	public static void deleteCard(final String cardNumber) {
-		
-		if (activeCards.size() == 1) {
-			showDeleteError("Error", "Can't remove your only card!");
-		} else {
-			new AlertDialog.Builder(context)
-		    .setTitle("Removing card")
-		    .setMessage("Are you sure you want to remove this card from latte.?")
-		    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) { 
-		        	for(Card c : activeCards) {
-		    			if(c.getShortNumber().equals(cardNumber)) {
-		    				activeCards.remove(c);
-		    				
-		    				//make the next card a default automatically
-		    				if (c.isDefault() && !activeCards.isEmpty()) {
-		    					setDefault(activeCards.get(0));
-		    				}
-		    				
-		    				break;
-		    				
-		    			}
-		    		}
-		    		
-		    		saveCards();
-		    		adapter.notifyDataSetChanged();
-		        }
-		     })
-		    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) { 
-		            // do nothing
-		        }
-		     })
-		    .setIcon(android.R.drawable.ic_dialog_alert)
-		    .show();
-		}
-    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         
-        saveCards();
+        CardManager.saveCards();
     }
     
     @Override
@@ -247,24 +151,10 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         }
         return super.onOptionsItemSelected(item);
     }
-    
-    private void updateDataViews() {        
-//    	String getBalance = pref.getString(BALANCE, null);
-//    	String balanceString;
-//    	if (getBalance != null ) {
-//    		Double balanceFormatted = Double.valueOf(getBalance);
-//    		balanceString = String.format("%.2f", balanceFormatted);
-//    	} else {
-//    		balanceString = "$0.00";
-//    	}
-    	
-    	rewardsNumber.setText(pref.getString(REWARDS, ""));
-    	//balanceNumber.setText("$" + balanceString);
-    	balanceNumber.setText(pref.getString(BALANCE, "$0.00"));
-    	starsNumber.setText(pref.getString(STARS, ""));
-    }
-    
 
+    /**
+     * Pull to refresh listener
+     */
 	@Override
 	public void onRefreshStarted(View view) {
 		// TODO Auto-generated method stub
@@ -274,7 +164,10 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		new AccountAsyncTask(this, request, mPullToRefreshLayout).execute();
 		
 	}
-
+	
+	/**
+	 * Called when the Account Async Task comes back with the right data
+	 */
 	@Override
 	public void onEventCompleted(JSONObject js) {
 		// TODO Auto-generated method stub
@@ -299,9 +192,56 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
     	updateDataViews();
 	}
 
+	/**
+	 * Called when the Account Async Task comes back with the wrong data. Impossible.
+	 */
 	@Override
 	public void onEventFailed() {}
 	
+	/**
+	 * Disable soft back button during setup; forces user to use our navigation
+	 */
+	@Override
+	public void onBackPressed() {}
+	
+	/*************************************************************/
+	
+	
+	
+	/**
+	 *sets up the adapter
+	 */
+    private void setupListView(){
+    	// 1. pass context and data to the custom adapter
+        adapter = new CardAdapter(this, activeCards);
+ 
+        // 2. Get ListView from activity_main.xml
+        listView = (ListView) findViewById(android.R.id.list);
+ 
+        // 3. setListAdapter
+        listView.setAdapter(adapter);
+        
+        // Set listview's footer for copyright info
+        View footerView = ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.copyright_footer, null, false);
+        listView.addFooterView(footerView);
+    }
+    
+    
+	
+	/**
+	 * updates the views
+	 */
+    private void updateDataViews() {        
+    	
+    	rewardsNumber.setText(pref.getString(REWARDS, ""));
+    	balanceNumber.setText(pref.getString(BALANCE, "$0.00"));
+    	starsNumber.setText(pref.getString(STARS, ""));
+    }
+    
+    
+	/**
+	 * Shows the popup to add a new card
+	 */
 	public static void showAddNewCard() {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		LayoutInflater li = LayoutInflater.from(context);
@@ -346,9 +286,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 				    	View radioButton = group.findViewById(checkedButton);
 				    	int idx = group.indexOfChild(radioButton);
 				    	
-				    	saveNewCard(cardNumber, idx);
+				    	CardManager.saveNewCard(cardNumber, idx);
 				    	
-				    	addNewCard(cardNumber, idx);
+				    	CardManager.addNewCard(cardNumber, idx);
 				    	dialog.dismiss();
 			    	}
 			    }
@@ -364,16 +304,11 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		alertDialog.show();
 	}
 	
-	public static void saveNewCard(String cardNumber, int colorIndex) {
-		String currentCards = pref.getString(LISTOFCARDS, "*");
-		currentCards = currentCards + cardNumber + ";" + colorIndex + ";0*";
-		
-		editor.putString(LISTOFCARDS, currentCards);
-		editor.commit();
-		
-		System.err.println(pref.getString(LISTOFCARDS, null));
-	}
-	
+	/**
+	 * requests focus to next portion of cardnumber
+	 * @param listOfSegments
+	 * @param position
+	 */
 	public static void setListenerSegment(final EditText[] listOfSegments, final int position) {
     	listOfSegments[position].addTextChangedListener(new TextWatcher(){
 	        public void afterTextChanged(Editable s) {
@@ -387,6 +322,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	    }); 
 	}
 
+	/**
+	 * Shows the About pop up
+	 */
 	public static void showAboutApp() {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		LayoutInflater li = LayoutInflater.from(context);
@@ -406,6 +344,11 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		alertDialog.show();
 	}
 	
+	/**
+	 * Shows an error popup
+	 * @param error
+	 * @param helpText
+	 */
 	public static void showError(String error, String helpText) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		LayoutInflater li = LayoutInflater.from(context);
@@ -431,6 +374,11 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		alertDialog.show();
 	}
 	
+	/**
+	 * Shows the delete error
+	 * @param error
+	 * @param helpText
+	 */
 	public static void showDeleteError(String error, String helpText) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		LayoutInflater li = LayoutInflater.from(context);
@@ -455,26 +403,10 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		alertDialog.show();
 	}
 	
-	public static void setDefault(Card card) {
-		//set all to false (there is some optimization here)
-		for(Card d : activeCards) d.setDefault(false);
-		
-		//set the new default
-		card.setDefault(true);
-		
-		//save the data
-		editor.putString(DEFAULTCARD, card.getCardNumber());
-		saveCards();
-		
-		adapter.notifyDataSetChanged();
-		
-
-		Toast.makeText(context, "Default card set!", Toast.LENGTH_SHORT).show();
-		
-		//create the new notification
-		new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), context, systemService).execute();
-	}
-	
+	/**
+	 * Finds the card that you want to make the default and calls CardManager.setDefault
+	 * @param v
+	 */
 	public void makeDefault(View v){
 		
 		TextView cardShort = (TextView) ((View) v.getParent()).findViewById(R.id.card_short_number);
@@ -485,7 +417,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 				
 				//If it's not the default...
 				if(!c.isDefault()){
-					setDefault(c);
+					CardManager.setDefault(c);
 					
 				}else{
 					//if it is the default, send a notification
