@@ -16,4 +16,7 @@
 	<color name="light_grey">#8C8C8C</color>
 	<color name="dark_green">#008000</color>
 	<color name="red">#F00018</color>
+	<color name="coffee_green">#3bc678</color>
+	
+	<!-- card colors -->
 </resources>

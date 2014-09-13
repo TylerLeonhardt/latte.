@@ -242,6 +242,8 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
         } else if (id == R.id.send_noti) {
         	new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
             return true;
+        } else if (id == R.id.about_app) {
+        	showAboutApp();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -385,6 +387,24 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	    }); 
 	}
 
+	public static void showAboutApp() {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		LayoutInflater li = LayoutInflater.from(context);
+		View promptsView = li.inflate(R.layout.about_app, null);
+
+		alertDialogBuilder.setView(promptsView);
+
+		alertDialogBuilder
+			.setCancelable(false)
+			.setPositiveButton("Close",
+			  new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog,int id) {
+			    }
+			  });
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
 	
 	public static void showError(String error, String helpText) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);

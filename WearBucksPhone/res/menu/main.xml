@@ -14,5 +14,11 @@
         android:orderInCategory="100"
         android:title="Send to Wear"
         app:showAsAction="never"/>
+    
+    <item
+        android:id="@+id/about_app"
+        android:orderInCategory="100"
+        android:title="About"
+        app:showAsAction="never"/>
 
 </menu>
