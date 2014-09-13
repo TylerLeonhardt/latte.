@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="20dp" >
+    
+    <ImageView
+        android:id="@+id/about_logo"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:scaleType="fitXY"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/latte_logo" 
+        android:paddingBottom="10dp"
+        android:layout_centerHorizontal="true"
+        />
+    
+    <LinearLayout
+	    android:id="@+id/error_detail_layout"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="20dp"
+	    android:layout_centerVertical="true"
+	    android:orientation="vertical"
+	    android:layout_below="@id/about_logo" >
+ 
+	    <TextView
+	        android:id="@+id/details_app"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="latte. lets you pay for Starbucks just by scanning your Android Wear device."
+	        android:textSize="14dp"
+	        android:textColor="@color/gray"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:layout_centerVertical="true" />
+	    
+	    <TextView
+	        android:id="@+id/details_dev_title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:paddingRight="10dp"
+	        android:text="Developers"
+	        android:textSize="18dp"
+	        android:textColor="@color/coffee_green"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:layout_marginTop="17dp" />
+	    
+	    <TextView
+	        android:id="@+id/details_dev"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:paddingRight="10dp"
+	        android:text="Developed by Tyler Leonhardt and Isabella Moreira."
+	        android:textSize="14dp"
+	        android:textColor="@color/gray"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:layout_centerVertical="true" />
+	    
+	    <TextView
+	        android:id="@+id/details_copyright_title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:paddingRight="10dp"
+	        android:text="Privacy \u0026 Copyright"
+	        android:textSize="18dp"
+	        android:textColor="@color/coffee_green"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:layout_marginTop="17dp" />
+	    
+	    <TextView
+	        android:id="@+id/details_copyright"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:paddingRight="10dp"
+	        android:text="We value your privacy and promise never to sell or share your data. We use only secure APIs to retrieve your Starbucks information and never store it on our servers.\n\nCopyright under Apache License etc."
+	        android:textSize="14dp"
+	        android:textColor="@color/gray"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:layout_centerVertical="true" />
+    
+    </LinearLayout>
+ 
+</RelativeLayout>
