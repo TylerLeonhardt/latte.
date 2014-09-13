@@ -23,7 +23,7 @@
 	         android:layout_width="fill_parent"
 	         android:layout_alignParentLeft="true"
 	         android:layout_below="@id/welcome_text"
-	         android:layout_marginTop="45dp" >
+	         android:layout_marginTop="20dp" >
     
 		    <ImageView
 		        android:id="@+id/step_one_image"
