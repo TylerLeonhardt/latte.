@@ -16,6 +16,12 @@
         app:showAsAction="never"/>
     
     <item
+        android:id="@+id/tutorial"
+        android:orderInCategory="100"
+        android:title="Tutorial"
+        app:showAsAction="never"/>
+    
+    <item
         android:id="@+id/about_app"
         android:orderInCategory="100"
         android:title="About"

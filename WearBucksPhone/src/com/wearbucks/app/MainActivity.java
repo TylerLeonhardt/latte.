@@ -37,8 +37,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 @SuppressLint("InflateParams")
-public class MainActivity extends ListActivity implements OnRefreshListener,
-		RequestEventListener {
+public class MainActivity extends ListActivity implements OnRefreshListener, RequestEventListener {
 
 	public static final String NAME = "name";
 	public static final String REWARDS = "rewards";
@@ -90,8 +89,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 
 		// If no data exists in Shared prefs, then start the Setup Activity.
 		// Else send a notification
-		if (pref.getString(USERNAME, null) == null
-				|| pref.getString(PASSWORD, null) == null) {
+		if (pref.getString(USERNAME, null) == null || pref.getString(PASSWORD, null) == null) {
 			// TODO: add check if already have user sharedprefs
 			Intent intent = new Intent(this, SetupInitialActivity.class);
 			startActivity(intent);
@@ -101,15 +99,16 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 
 		} else {
 			// Show tutorial on first launch
-			//if (pref.getBoolean(FIRSTLAUNCH, false)) {
+			if (pref.getBoolean(FIRSTLAUNCH, false)) {
 				showOverlayTutorial();
 
 				editor.putBoolean(MainActivity.FIRSTLAUNCH, false);
 				editor.commit();
-			//}
+			} else {
+				getWindow().setWindowAnimations(0);
+			}
 
-			new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this,
-					systemService).execute();
+			new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
 
 		}
 
@@ -124,8 +123,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 		if (nameActionBar.equals("")) {
 			getActionBar().setTitle("  Welcome!");
 		} else {
-			getActionBar().setTitle(
-					"  Welcome, " + nameActionBar.split(" ")[0] + "!");
+			getActionBar().setTitle("  Welcome, " + nameActionBar.split(" ")[0] + "!");
 		}
 
 		// Display user credentials for now
@@ -137,95 +135,9 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 
 		// You will setup the action bar with pull to refresh layout
 		mPullToRefreshLayout = (PullToRefreshLayout) findViewById(R.id.ptr_layout);
-		ActionBarPullToRefresh.from(this).allChildrenArePullable()
-				.listener(this).setup(mPullToRefreshLayout);
+		ActionBarPullToRefresh.from(this).allChildrenArePullable().listener(this)
+				.setup(mPullToRefreshLayout);
 
-	}
-
-	private void showOverlayTutorial() {
-		final Dialog dialog = new Dialog(this,
-				android.R.style.Theme_Translucent_NoTitleBar);
-
-		dialog.setContentView(R.layout.overlay_tutorial);
-
-		RelativeLayout layout = (RelativeLayout) dialog
-				.findViewById(R.id.llOverlay_activity);
-		layout.setBackgroundColor(getResources().getColor(R.color.grey_trans));
-		
-		//DOTDOTDOT
-		TextView dotdotdot = new TextView(this);
-		
-		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		lp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		lp.topMargin = 100;
-		lp.rightMargin = 25;
-		
-		dotdotdot.setLayoutParams(lp);
-		dotdotdot.setText("For everything else, tap here!");
-		dotdotdot.setTextColor(getResources().getColor(R.color.white));
-		dotdotdot.setTypeface(null, Typeface.BOLD_ITALIC);
-		
-		layout.addView(dotdotdot);
-		//DOTDOTDOT END
-		
-		//STAR
-		TextView star = new TextView(this);
-		
-		RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		lp2.addRule(RelativeLayout.CENTER_VERTICAL);
-		lp2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		lp2.rightMargin = 120;
-		
-		star.setLayoutParams(lp2);
-		star.setText("To set your default card, tap the star!");
-		star.setTextColor(getResources().getColor(R.color.white));
-		star.setTypeface(null, Typeface.BOLD_ITALIC);
-		star.setPadding(0, 20, 0, 0);
-		
-		layout.addView(star);
-		
-		TextView x = new TextView(this);
-		
-		RelativeLayout.LayoutParams lp3 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		lp3.addRule(RelativeLayout.CENTER_VERTICAL);
-		lp3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		lp3.rightMargin = 40;
-		
-		x.setLayoutParams(lp3);
-		x.setText("To delete the card, tap the X!");
-		x.setTextColor(getResources().getColor(R.color.white));
-		x.setTypeface(null, Typeface.BOLD_ITALIC);
-		x.setPadding(0, 250, 0, 0);
-		
-		layout.addView(x);
-		
-		TextView tapToDismiss = new TextView(this);
-		RelativeLayout.LayoutParams lp4 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		lp4.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		lp4.bottomMargin = 50;
-		
-		tapToDismiss.setLayoutParams(lp4);
-		tapToDismiss.setText("Tap anywhere to dismiss...");
-		tapToDismiss.setTextColor(getResources().getColor(R.color.white));
-		tapToDismiss.setTypeface(null, Typeface.BOLD_ITALIC);
-		tapToDismiss.setTextSize(26.0f);
-		tapToDismiss.setGravity(Gravity.CENTER_HORIZONTAL);
-		
-		layout.addView(tapToDismiss);
-		
-		layout.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				dialog.dismiss();
-				Intent intent = new Intent(context, MainActivity.class);
-				startActivity(intent);
-
-			}
-
-		});
-
-		dialog.show();
 	}
 
 	@Override
@@ -252,9 +164,11 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 			showAddNewCard();
 			return true;
 		} else if (id == R.id.send_noti) {
-			new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this,
-					systemService).execute();
+			new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
 			return true;
+		} else if (id == R.id.tutorial) {
+			showOverlayTutorial();
+
 		} else if (id == R.id.about_app) {
 			showAboutApp();
 		}
@@ -268,8 +182,8 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 	public void onRefreshStarted(View view) {
 		// TODO Auto-generated method stub
 
-		String request = "{\"username\":\"" + pref.getString(USERNAME, null)
-				+ "\",\"password\":\"" + pref.getString(PASSWORD, null) + "\"}";
+		String request = "{\"username\":\"" + pref.getString(USERNAME, null) + "\",\"password\":\""
+				+ pref.getString(PASSWORD, null) + "\"}";
 
 		new AccountAsyncTask(this, request, mPullToRefreshLayout).execute();
 
@@ -284,15 +198,13 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 		try {
 
 			Double balanceFormatted = js.getDouble("dollar_balance");
-			String moneyString = NumberFormat.getCurrencyInstance().format(
-					balanceFormatted);
+			String moneyString = NumberFormat.getCurrencyInstance().format(balanceFormatted);
 
 			editor.putString(BALANCE, moneyString);
 			editor.putString(NAME, js.getString("customer_name"));
 			editor.putString(REWARDS, js.getString("rewards"));
 			String stringStars = js.getString("stars");
-			int numStars = (stringStars == null) ? 0 : Integer
-					.parseInt(stringStars) % 12;
+			int numStars = (stringStars == null) ? 0 : Integer.parseInt(stringStars) % 12;
 			editor.putString(STARS, "" + numStars);
 			System.err.println("main: " + numStars);
 		} catch (JSONException e) {
@@ -322,7 +234,30 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 	/*************************************************************/
 
 	/**
-	 * sets up the adapter
+	 * Show the Overlay Tutorial
+	 */
+	private void showOverlayTutorial() {
+		final Dialog dialog = new Dialog(this, android.R.style.Theme_Translucent_NoTitleBar);
+		dialog.setContentView(R.layout.overlay_tutorial);
+		RelativeLayout layout = (RelativeLayout) dialog.findViewById(R.id.llOverlay_activity);
+
+		layout.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				dialog.dismiss();
+				Intent intent = new Intent(context, MainActivity.class);
+				startActivity(intent);
+
+			}
+
+		});
+
+		dialog.show();
+	}
+
+	/**
+	 * Sets up the adapter
 	 */
 	private void setupListView() {
 		// 1. pass context and data to the custom adapter
@@ -335,9 +270,8 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 		listView.setAdapter(adapter);
 
 		// Set listview's footer for copyright info
-		View footerView = ((LayoutInflater) this
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-				R.layout.copyright_footer, null, false);
+		View footerView = ((LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+				.inflate(R.layout.copyright_footer, null, false);
 		listView.addFooterView(footerView);
 	}
 
@@ -355,29 +289,21 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 	 * Shows the popup to add a new card
 	 */
 	public static void showAddNewCard() {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				context);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.add_new_card, null);
 
-		View cardView = promptsView
-				.findViewById(R.id.add_new_card_generic_popup);
+		View cardView = promptsView.findViewById(R.id.add_new_card_generic_popup);
 
 		// Get all card elements
-		final EditText cardNumber1 = ((EditText) cardView
-				.findViewById(R.id.card_input_1));
-		final EditText cardNumber2 = ((EditText) cardView
-				.findViewById(R.id.card_input_2));
-		final EditText cardNumber3 = ((EditText) cardView
-				.findViewById(R.id.card_input_3));
-		final EditText cardNumber4 = ((EditText) cardView
-				.findViewById(R.id.card_input_4));
+		final EditText cardNumber1 = ((EditText) cardView.findViewById(R.id.card_input_1));
+		final EditText cardNumber2 = ((EditText) cardView.findViewById(R.id.card_input_2));
+		final EditText cardNumber3 = ((EditText) cardView.findViewById(R.id.card_input_3));
+		final EditText cardNumber4 = ((EditText) cardView.findViewById(R.id.card_input_4));
 
-		final RadioGroup group = (RadioGroup) cardView
-				.findViewById(R.id.card_color_group);
+		final RadioGroup group = (RadioGroup) cardView.findViewById(R.id.card_color_group);
 
-		EditText[] listOfSegments = { cardNumber1, cardNumber2, cardNumber3,
-				cardNumber4 };
+		EditText[] listOfSegments = { cardNumber1, cardNumber2, cardNumber3, cardNumber4 };
 
 		for (int i = 0; i < listOfSegments.length; i++) {
 			setListenerSegment(listOfSegments, i);
@@ -385,49 +311,37 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 
 		alertDialogBuilder.setView(promptsView);
 
-		alertDialogBuilder
-				.setCancelable(false)
-				.setNeutralButton("Add Card",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								String cardSegment1 = cardNumber1.getText()
-										.toString();
-								String cardSegment2 = cardNumber2.getText()
-										.toString();
-								String cardSegment3 = cardNumber3.getText()
-										.toString();
-								String cardSegment4 = cardNumber4.getText()
-										.toString();
+		alertDialogBuilder.setCancelable(false)
+				.setNeutralButton("Add Card", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						String cardSegment1 = cardNumber1.getText().toString();
+						String cardSegment2 = cardNumber2.getText().toString();
+						String cardSegment3 = cardNumber3.getText().toString();
+						String cardSegment4 = cardNumber4.getText().toString();
 
-								String cardNumber = "" + cardSegment1
-										+ cardSegment2 + cardSegment3
-										+ cardSegment4;
+						String cardNumber = "" + cardSegment1 + cardSegment2 + cardSegment3
+								+ cardSegment4;
 
-								// TODO: make a better validation check
-								if (cardNumber.length() < 16) {
-									showError("Incorrect card",
-											"Please check card number");
-								} else {
+						// TODO: make a better validation check
+						if (cardNumber.length() < 16) {
+							showError("Incorrect card", "Please check card number");
+						} else {
 
-									int checkedButton = group
-											.getCheckedRadioButtonId();
-									View radioButton = group
-											.findViewById(checkedButton);
-									int idx = group.indexOfChild(radioButton);
+							int checkedButton = group.getCheckedRadioButtonId();
+							View radioButton = group.findViewById(checkedButton);
+							int idx = group.indexOfChild(radioButton);
 
-									CardManager.saveNewCard(cardNumber, idx);
+							CardManager.saveNewCard(cardNumber, idx);
 
-									CardManager.addNewCard(cardNumber, idx);
-									dialog.dismiss();
-								}
-							}
-						})
-				.setNegativeButton("Cancel",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
+							CardManager.addNewCard(cardNumber, idx);
+							dialog.dismiss();
+						}
+					}
+				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
 
-							}
-						});
+					}
+				});
 
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
@@ -439,8 +353,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 	 * @param listOfSegments
 	 * @param position
 	 */
-	public static void setListenerSegment(final EditText[] listOfSegments,
-			final int position) {
+	public static void setListenerSegment(final EditText[] listOfSegments, final int position) {
 		listOfSegments[position].addTextChangedListener(new TextWatcher() {
 			public void afterTextChanged(Editable s) {
 
@@ -450,12 +363,10 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 				}
 			}
 
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			}
 
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 			}
 		});
 	}
@@ -464,8 +375,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 	 * Shows the About pop up
 	 */
 	public static void showAboutApp() {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				context);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.about_app, null);
 
@@ -488,17 +398,14 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 	 * @param helpText
 	 */
 	public static void showError(String error, String helpText) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				context);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.error_message, null);
 
 		alertDialogBuilder.setView(promptsView);
 
-		final TextView details = (TextView) promptsView
-				.findViewById(R.id.error_details);
-		final TextView help = (TextView) promptsView
-				.findViewById(R.id.error_help);
+		final TextView details = (TextView) promptsView.findViewById(R.id.error_details);
+		final TextView help = (TextView) promptsView.findViewById(R.id.error_help);
 		details.setText(error);
 		help.setText(helpText);
 
@@ -520,17 +427,14 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 	 * @param helpText
 	 */
 	public static void showDeleteError(String error, String helpText) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				context);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.error_message, null);
 
 		alertDialogBuilder.setView(promptsView);
 
-		final TextView details = (TextView) promptsView
-				.findViewById(R.id.error_details);
-		final TextView help = (TextView) promptsView
-				.findViewById(R.id.error_help);
+		final TextView details = (TextView) promptsView.findViewById(R.id.error_details);
+		final TextView help = (TextView) promptsView.findViewById(R.id.error_help);
 		details.setText(error);
 		help.setText(helpText);
 
@@ -552,8 +456,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 	 */
 	public void makeDefault(View v) {
 
-		TextView cardShort = (TextView) ((View) v.getParent())
-				.findViewById(R.id.card_short_number);
+		TextView cardShort = (TextView) ((View) v.getParent()).findViewById(R.id.card_short_number);
 
 		for (Card c : activeCards) {
 			// Checks if the button corresponds to a certain card
@@ -565,8 +468,8 @@ public class MainActivity extends ListActivity implements OnRefreshListener,
 
 				} else {
 					// if it is the default, send a notification
-					new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null),
-							this, systemService).execute();
+					new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService)
+							.execute();
 				}
 			}
 		}

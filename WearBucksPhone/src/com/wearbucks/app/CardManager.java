@@ -85,7 +85,7 @@ public class CardManager {
 	public static void deleteCard(final String cardNumber) {
 
 		if (MainActivity.activeCards.size() == 1) {
-			MainActivity.showDeleteError("Hang on", "You need at least one card!");
+			MainActivity.showDeleteError("Hang on!", "You need at least one card");
 		} else {
 			new AlertDialog.Builder(MainActivity.context).setTitle("Removing card")
 					.setMessage("Are you sure you want to remove this card from latte.?")

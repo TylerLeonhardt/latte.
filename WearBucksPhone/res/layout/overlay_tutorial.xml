@@ -3,9 +3,38 @@
     android:id="@+id/llOverlay_activity"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="@color/grey_trans" >
-    
-    
+    android:background="@color/grey_trans"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="25px"
+        android:layout_marginTop="100px"
+        android:text="@string/menu_help"
+        android:textColor="@color/white"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="@string/menu_defaults"
+        android:textColor="@color/white"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="50px"
+        android:layout_centerVertical="true"
+        android:text="@string/menu_dismiss"
+        android:textColor="@color/white"
+        android:textStyle="bold|italic"
+        android:textSize="26dp"
+        android:gravity="center" />
 
 </RelativeLayout>

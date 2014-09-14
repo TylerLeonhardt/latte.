@@ -40,5 +40,10 @@
     
     <!-- Copyright Footer -->
     <string name="copyright_description">Pay for Starbucks with Android Wear. Copyright \u00a9 2014.</string>
+    
+    <!-- Tutorial -->
+    <string name="menu_help">For everything else, tap here!</string>
+    <string name="menu_defaults">\n\n\n\nTo set your default card, tap the star!\t\t\t\t\t\t\n\n\n\t\t\t\t\t\t\t\t\tTo delete the card, tap the X!  </string>
+    <string name="menu_dismiss">Tap anywhere to dismiss</string>
 
 </resources>
