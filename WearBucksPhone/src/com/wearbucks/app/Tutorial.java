@@ -7,24 +7,19 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 @SuppressLint("InflateParams")
-public class SetupInitialActivity extends FragmentActivity implements RequestEventListener {
+public class Tutorial extends FragmentActivity implements RequestEventListener {
 
 	// All fragmant set up screens
 	public LoginFragment loginFragment;
@@ -35,12 +30,11 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 	// Shared preferences
 	public SharedPreferences pref;
 	public SharedPreferences.Editor editor;
-	public Context context;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.setup_initial);
+		setContentView(R.layout.overlay_tutorial);
 
 		// Create an instance of the fragments that take user input, allowing to
 		// store state if the user navigates back to screen
@@ -51,7 +45,6 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 		ft = getSupportFragmentManager().beginTransaction();
 		pref = MainActivity.pref;
 		editor = MainActivity.editor;
-		context = this;
 
 		// Show welcome screen
 		if (savedInstanceState == null) {
@@ -121,9 +114,9 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 				showError("Incorrect card", "Please check card number");
 			}
 
-		} else if (viewId == R.id.continue_to_main) { // Go to MainActivity			
-				Intent intent = new Intent(this, MainActivity.class);
-				startActivity(intent);
+		} else if (viewId == R.id.continue_to_main) { // Go to MainActivity
+			Intent intent = new Intent(this, MainActivity.class);
+			startActivity(intent);
 
 		} else if (viewId == R.id.back_to_welcome) { // Go back to
 														// WelcomeFragment
@@ -201,30 +194,6 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 		// Show message
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
-	}
-	
-	private void showOverlayTutorial() {
-		final Dialog dialog = new Dialog(this,
-				android.R.style.Theme_Translucent_NoTitleBar);
-
-		dialog.setContentView(R.layout.overlay_tutorial);
-
-		LinearLayout layout = (LinearLayout) dialog
-				.findViewById(R.id.llOverlay_activity);
-		layout.setBackgroundColor(Color.TRANSPARENT);
-		layout.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				dialog.dismiss();
-				Intent intent = new Intent(context, MainActivity.class);
-				startActivity(intent);
-
-			}
-
-		});
-
-		dialog.show();
 	}
 
 	/**
