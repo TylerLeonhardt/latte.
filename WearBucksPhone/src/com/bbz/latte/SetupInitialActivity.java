@@ -158,13 +158,18 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 		// JSON API response data
 		try {
 			// Format money
-			double money = Double.parseDouble(response.getString("dollar_balance"));
-			String moneyString = NumberFormat.getCurrencyInstance().format(money);
+			//If it's a new user who hasn't even added a card to their account it will no longer crash
+			if(response.getString("dollar_balance").length() >= 10){
+				editor.putString(MainActivity.BALANCE, "0.00");
+			}else{
+				Double balanceFormatted = response.getDouble("dollar_balance");
+				String moneyString = NumberFormat.getCurrencyInstance().format(balanceFormatted);
+				editor.putString(MainActivity.BALANCE, moneyString);
+			}
 
 			editor.putString(MainActivity.NAME, response.getString("customer_name"));
 			editor.putString(MainActivity.STARS, response.getString("stars"));
 			editor.putString(MainActivity.REWARDS, response.getString("rewards"));
-			editor.putString(MainActivity.BALANCE, moneyString);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
