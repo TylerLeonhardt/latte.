@@ -53,7 +53,7 @@ public class AccountAsyncTask extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected Void doInBackground(Void... params) {
 		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost httpost = new HttpPost("http://aqueous-reaches-7492.herokuapp.com/account");
+		HttpPost httpost = new HttpPost("https://aqueous-reaches-7492.herokuapp.com/account");
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		
 		StringEntity se = null;

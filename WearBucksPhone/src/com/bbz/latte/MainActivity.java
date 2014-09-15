@@ -191,11 +191,16 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	public void onEventCompleted(JSONObject js) {
 		// TODO Auto-generated method stub
 		try {
-
-			Double balanceFormatted = js.getDouble("dollar_balance");
-			String moneyString = NumberFormat.getCurrencyInstance().format(balanceFormatted);
-
-			editor.putString(BALANCE, moneyString);
+			
+			//If it's a new user who hasn't even added a card to their account it will no longer crash
+			if(js.getString("dollar_balance").length() >= 10){
+				editor.putString(BALANCE, "0.00");
+			}else{
+				Double balanceFormatted = js.getDouble("dollar_balance");
+				String moneyString = NumberFormat.getCurrencyInstance().format(balanceFormatted);
+				editor.putString(BALANCE, moneyString);
+			}
+			
 			editor.putString(NAME, js.getString("customer_name"));
 			editor.putString(REWARDS, js.getString("rewards"));
 			String stringStars = js.getString("stars");
