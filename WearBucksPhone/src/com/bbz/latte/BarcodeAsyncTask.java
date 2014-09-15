@@ -85,7 +85,7 @@ public class BarcodeAsyncTask extends AsyncTask<Void, Void, Void> {
 		// Expanded barcode image notification
 		NotificationCompat.BigPictureStyle notiStyle = new NotificationCompat.BigPictureStyle();
 		notiStyle.setBigContentTitle("latte.");
-		notiStyle.setSummaryText("Barcode for card ( "
+		notiStyle.setSummaryText("Barcode for card ("
 				+ ("" + barcodeNumber).substring(("" + barcodeNumber).length() - 4) + ")");
 		notiStyle.bigPicture(barcodeImage);
 
