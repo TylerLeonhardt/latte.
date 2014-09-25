@@ -38,10 +38,12 @@ import android.widget.TextView;
 		ImageView cardColor = (ImageView) rowView.findViewById(R.id.credit_card_color_single);
 		Button defaultButton = (Button) rowView.findViewById(R.id.default_button_single_card);
 		Button deleteButton = (Button) rowView.findViewById(R.id.delete_button_single_card);
+		TextView balView = (TextView) rowView.findViewById(R.id.card_bal);
 		TypedArray colors = context.getResources().obtainTypedArray(R.array.card_colors_single);
 
 		// Show last four digits
 		labelView.setText(itemsArrayList.get(position).getShortNumber());
+		balView.setText(itemsArrayList.get(position).getBal());
 
 		// Show if default
 		if (itemsArrayList.get(position).isDefault()) {

@@ -28,7 +28,7 @@
             android:name="com.bbz.latte.SetupInitialActivity"
             android:screenOrientation="portrait" ></activity>
     </application>
-    
+    <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>

@@ -6,23 +6,33 @@ public class Card {
 	private int colorPreference;
 	private boolean isDefault;
 	private String shortNumber;
+	private String balance;
+	private String pin;
 
-	public Card(String cardNumber, int colorPreference) {
+	public Card(String cardNumber, int colorPreference, String pin) {
 		this.cardNumber = cardNumber;
 		this.colorPreference = colorPreference;
 
 		shortNumber = this.cardNumber.substring(this.cardNumber.length() - 4);
 
 		isDefault = false;
+		
+		balance = "";
+		
+		setPin(pin);
 	}
 
-	public Card(String cardNumber, int colorPreference, boolean isDefault) {
+	public Card(String cardNumber, int colorPreference, boolean isDefault, String pin) {
 		this.cardNumber = cardNumber;
 		this.colorPreference = colorPreference;
 
 		shortNumber = this.cardNumber.substring(this.cardNumber.length() - 4);
 
 		this.isDefault = isDefault;
+		
+		balance = "";
+		
+		setPin(pin);
 	}
 
 	public String getCardNumber() {
@@ -47,7 +57,23 @@ public class Card {
 
 	@Override
 	public String toString() {
-		return cardNumber + ";" + colorPreference + ";" + (isDefault ? "1" : "0") + "*";
+		return cardNumber + ";" + colorPreference + ";" + (isDefault ? "1;" : "0;") + pin + "*";
+	}
+	
+	public void setBal(String bal){
+		balance = bal;
+	}
+	
+	public String getBal(){
+		return balance;
+	}
+
+	public String getPin() {
+		return pin;
+	}
+
+	public void setPin(String pin) {
+		this.pin = pin;
 	}
 
 }

@@ -224,4 +224,10 @@ public class Tutorial extends FragmentActivity implements RequestEventListener {
 		loginFragment.enableButtons();
 	}
 
+	@Override
+	public void onValidateCard(boolean isValid) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

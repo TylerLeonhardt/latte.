@@ -17,6 +17,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,7 +44,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	public static final String PASSWORD = "password";
 	public static final String DEFAULTCARD = "dcard";
 	public static final String LISTOFCARDS = "listofcards"; // format:
-															// "*16DigitCardNumber;CustomColor;isDefault*16DigitCardNumber;CustomColor;isDefault*"
+															// "*16DigitCardNumber;CustomColor;isDefault*16DigitCardNumber;CustomColor;isDefault;pin*"
 	public static final String FIRSTLAUNCH = "firstlaunch";
 
 	// for sending notifications
@@ -66,6 +68,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 	private TextView starsNumber;
 	private TextView balanceNumber;
 	private ListView listView;
+	private static ConnectivityManager cm;
 
 	/***************************************/
 	/** Overrides **/
@@ -76,6 +79,8 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		cm =
+		        (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
 		// important variables set
 		context = this;
 		systemService = getSystemService(Context.NOTIFICATION_SERVICE);
@@ -102,9 +107,14 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 			} else {
 				getWindow().setWindowAnimations(0);
 			}
+			
+			String request = "{\"username\":\"" + pref.getString(USERNAME, null) + "\",\"password\":\""
+					+ pref.getString(PASSWORD, null) + "\"}";
+			
 
+			new AccountAsyncTask(this, request, mPullToRefreshLayout).execute();
 			new BarcodeAsyncTask(pref.getString(DEFAULTCARD, null), this, systemService).execute();
-
+			
 		}
 
 		// creates the card array list
@@ -133,6 +143,11 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		ActionBarPullToRefresh.from(this).allChildrenArePullable().listener(this)
 				.setup(mPullToRefreshLayout);
 
+	
+		for(int i = 0; i < activeCards.size(); i++){
+			if(!activeCards.get(i).getPin().equals("nopin"))
+				new BalAsyncTask().execute(i);
+		}
 	}
 
 	@Override
@@ -179,8 +194,15 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 
 		String request = "{\"username\":\"" + pref.getString(USERNAME, null) + "\",\"password\":\""
 				+ pref.getString(PASSWORD, null) + "\"}";
+		
 
 		new AccountAsyncTask(this, request, mPullToRefreshLayout).execute();
+	
+		for(int i = 0; i < activeCards.size(); i++){
+			if(!activeCards.get(i).getPin().equals("nopin"))
+				new BalAsyncTask().execute(i);
+		}
+	
 
 	}
 
@@ -293,7 +315,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		LayoutInflater li = LayoutInflater.from(context);
 		View promptsView = li.inflate(R.layout.add_new_card, null);
 
-		View cardView = promptsView.findViewById(R.id.add_new_card_generic_popup);
+		final View cardView = promptsView.findViewById(R.id.add_new_card_generic_popup);
 
 		// Get all card elements
 		final EditText cardNumber1 = ((EditText) cardView.findViewById(R.id.card_input_1));
@@ -329,12 +351,31 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 
 							int checkedButton = group.getCheckedRadioButtonId();
 							View radioButton = group.findViewById(checkedButton);
+							
+							String pin = "";
+
+							pin = ((EditText) cardView.findViewById(R.id.pin_enter)).getText().toString();
+							if(pin.equals("")) pin = "nopin";
+							
 							int idx = group.indexOfChild(radioButton);
 
-							CardManager.saveNewCard(cardNumber, idx);
-
-							CardManager.addNewCard(cardNumber, idx);
-							dialog.dismiss();
+							if(pin.equals("nopin")){
+								CardManager.saveNewCard(cardNumber, idx, pin);
+	
+								CardManager.addNewCard(cardNumber, idx, pin);
+								
+							
+								for(int i = 0; i < activeCards.size(); i++){
+									if(!activeCards.get(i).getPin().equals("nopin"))
+										new BalAsyncTask().execute(i);
+								}
+								
+								dialog.dismiss();
+							}else{
+								new ValidateCardAsyncTask(dialog, idx).execute(cardNumber,pin);
+							}
+							
+							
 						}
 					}
 				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -473,5 +514,18 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 				}
 			}
 		}
+	}
+
+	@Override
+	public void onValidateCard(boolean isValid) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public static boolean isConnected(){
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		boolean isConnected = activeNetwork != null &&
+		                      activeNetwork.isConnectedOrConnecting();
+		return isConnected;
 	}
 }

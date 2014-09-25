@@ -41,7 +41,7 @@ public class CardManager {
 				boolean def = cardData[2].equals("1") ? true : false;
 
 				MainActivity.activeCards.add(new Card(cardData[0], Integer.parseInt(cardData[1]),
-						def));
+						def, cardData[3]));
 			}
 		}
 	}
@@ -60,9 +60,10 @@ public class CardManager {
 
 	// saves the new card to the system prefs (aka concats the string and saves
 	// it to system prefs)
-	public static void saveNewCard(String cardNumber, int colorIndex) {
+	public static void saveNewCard(String cardNumber, int colorIndex, String pin) {
 		String currentCards = MainActivity.pref.getString(MainActivity.LISTOFCARDS, "*");
-		currentCards = currentCards + cardNumber + ";" + colorIndex + ";0*";
+		
+		currentCards = currentCards + cardNumber + ";" + colorIndex + ";0;" + (pin.equals("") ? "nopin" : pin) + "*";
 
 		MainActivity.editor.putString(MainActivity.LISTOFCARDS, currentCards);
 		MainActivity.editor.commit();
@@ -72,11 +73,11 @@ public class CardManager {
 
 	// Creates a new card and adds it to the arraylist of cards and updates the
 	// list view
-	public static void addNewCard(String cardNumber, int idx) {
+	public static void addNewCard(String cardNumber, int idx, String pin) {
 		if (MainActivity.activeCards.size() == 0) {
-			MainActivity.activeCards.add(new Card(cardNumber, idx, true));
+			MainActivity.activeCards.add(new Card(cardNumber, idx, true, pin));
 		} else {
-			MainActivity.activeCards.add(new Card(cardNumber, idx));
+			MainActivity.activeCards.add(new Card(cardNumber, idx, pin));
 		}
 		MainActivity.adapter.notifyDataSetChanged();
 	}

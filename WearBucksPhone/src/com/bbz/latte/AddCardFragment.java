@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
@@ -18,6 +19,7 @@ public class AddCardFragment extends Fragment {
 
 	public String cardNumber;
 	public int selectedColor = 0;
+	public String pin;
 
 	// Layout elements
 	public EditText cardNumber1;
@@ -26,6 +28,10 @@ public class AddCardFragment extends Fragment {
 	public EditText cardNumber4;
 	public RadioGroup group;
 	public View radioButton;
+	public EditText pinEnter;
+	
+	private Button back;
+	private Button addCard;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,6 +43,9 @@ public class AddCardFragment extends Fragment {
 		cardNumber3 = ((EditText) view.findViewById(R.id.card_input_3));
 		cardNumber4 = ((EditText) view.findViewById(R.id.card_input_4));
 		group = (RadioGroup) view.findViewById(R.id.card_color_group);
+		pinEnter = (EditText) view.findViewById(R.id.pin_enter);
+		back = (Button) view.findViewById(R.id.continue_to_account_summary);
+		addCard = (Button) view.findViewById(R.id.back_to_login);
 
 		EditText[] listOfSegments = { cardNumber1, cardNumber2, cardNumber3, cardNumber4 };
 
@@ -87,6 +96,11 @@ public class AddCardFragment extends Fragment {
 		}
 
 		this.cardNumber = cardNumber;
+		this.pin = pinEnter.getText().toString();
+		
+		System.out.println(this.pin);
+		
+		if(pin.equals("") || pin.equals(null)) this.pin = "nopin";
 
 		// Set preferred color
 		int checkedButton = group.getCheckedRadioButtonId();
@@ -95,5 +109,15 @@ public class AddCardFragment extends Fragment {
 		selectedColor = idx;
 
 		return true;
+	}
+	
+	public void deactivateButtons(){
+		back.setEnabled(false);
+		addCard.setEnabled(false);
+	}
+	
+	public void activateButtons(){
+		back.setEnabled(true);
+		addCard.setEnabled(true);
 	}
 }

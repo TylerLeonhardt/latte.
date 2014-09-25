@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 public class BarcodeAsyncTask extends AsyncTask<Void, Void, Void> {
 
@@ -25,6 +26,7 @@ public class BarcodeAsyncTask extends AsyncTask<Void, Void, Void> {
 	private Context main;
 	private Object notiMan;
 
+
 	public BarcodeAsyncTask(String barcode, Context context, Object notiMan) {
 		this.barcode = barcode;
 		main = context;
@@ -33,6 +35,11 @@ public class BarcodeAsyncTask extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
+		
+		if(!MainActivity.isConnected()){
+			return null;
+		}
+		
 		InputStream inputStream = null;
 		Bitmap result = null;
 
@@ -73,6 +80,13 @@ public class BarcodeAsyncTask extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected void onPostExecute(Void aVoid) {
+		
+		if(!MainActivity.isConnected()){
+			Toast.makeText(MainActivity.context, "No Internet Connection", Toast.LENGTH_SHORT)
+			.show();
+			return;
+		}
+		
 		sendNotification(barcode, barcodeImage);
 	}
 

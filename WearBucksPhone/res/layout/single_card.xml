@@ -51,5 +51,18 @@
         android:layout_toLeftOf="@id/delete_button_single_card"
         android:layout_centerVertical="true"
         android:onClick="makeDefault" />
+    
+    <TextView
+        android:id="@+id/card_bal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp" 
+        android:layout_centerVertical="true"
+        android:paddingLeft="15dp"
+        android:textColor="@color/grey"
+        android:layout_toRightOf="@id/card_short_number"
+        android:textStyle="italic"
+        android:text="$50.00"
+        />
 
 </RelativeLayout>

@@ -81,6 +81,31 @@
             android:maxLength="4" />
     </RelativeLayout>
     
+    <TextView 
+        android:id="@+id/add_pin_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:textSize="12dp"
+        android:textColor="@color/light_grey"
+        android:textStyle="italic"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_below="@id/card_input_layout"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="15dp"
+        android:layout_alignParentLeft="true"
+        android:text="Optionally, add your card's pin for the exact balance:" />
+    
+    <EditText 
+        android:id="@+id/pin_enter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add_pin_text"
+        android:layout_alignLeft="@id/card_input_layout"
+        android:hint="########"
+        android:inputType="number"
+        android:maxLength="8" />
+    
     <TextView
         android:id="@+id/addcard_color"
         android:layout_width="wrap_content"
@@ -91,7 +116,7 @@
         android:textColor="@color/light_grey"
         android:textStyle="italic"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_below="@id/card_input_layout"
+        android:layout_below="@id/pin_enter"
         android:layout_marginTop="25dp"
         android:layout_marginLeft="15dp" />
 

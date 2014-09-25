@@ -96,9 +96,12 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 				// Only if data from LoginFragment is valid and receives okay
 				// from API
 				if (loginFragment.isValid()) {
-					loginFragment.disableButtons();
-					Toast.makeText(getApplicationContext(), "Loading...", Toast.LENGTH_SHORT)
+					if(MainActivity.isConnected()) {
+						loginFragment.disableButtons();
+					
+						Toast.makeText(getApplicationContext(), "Loading...", Toast.LENGTH_SHORT)
 							.show();
+					}
 					new AccountAsyncTask(this, loginFragment.getJsonString(), null).execute();
 				} else { // Show error message
 					showError("Incorrect login", "Please check username and password");
@@ -114,11 +117,18 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 
 			// Only if data from AddCardFragment is valid
 			if (addCardFragment.isValid()) {
-				saveUserData();
-				ft.replace(R.id.frame_location, new SummaryFragment());
-				ft.commit();
+				if(MainActivity.isConnected()) {
+					addCardFragment.deactivateButtons();
+				
+					Toast.makeText(getApplicationContext(), "Loading...", Toast.LENGTH_SHORT)
+						.show();
+				}
+				if(addCardFragment.pin.equals("nopin")) onValidateCard(true);
+				else new ValidateCardAsyncTask(this, null).execute(addCardFragment.cardNumber,addCardFragment.pin);
+				
 			} else { // Show error message
 				showError("Incorrect card", "Please check card number");
+				addCardFragment.activateButtons();
 			}
 
 		} else if (viewId == R.id.continue_to_main) { // Go to MainActivity			
@@ -153,7 +163,7 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 		editor.putString(MainActivity.PASSWORD, loginFragment.password);
 		editor.putString(MainActivity.DEFAULTCARD, addCardFragment.cardNumber);
 		editor.putString(MainActivity.LISTOFCARDS, "*" + addCardFragment.cardNumber + ";"
-				+ addCardFragment.selectedColor + ";1*");
+				+ addCardFragment.selectedColor + ";1;" + (addCardFragment.pin.equals("") || addCardFragment.pin.equals(null) ? "nopin" : addCardFragment.pin) + "*");
 
 		// JSON API response data
 		try {
@@ -260,4 +270,16 @@ public class SetupInitialActivity extends FragmentActivity implements RequestEve
 		loginFragment.enableButtons();
 	}
 
+	@Override
+	public void onValidateCard(boolean isValid) {
+		// TODO Auto-generated method stub
+		if(!isValid)
+			showError("Incorrect card", "Please check card number and pin");
+		else{
+			saveUserData();
+			ft.replace(R.id.frame_location, new SummaryFragment());
+			ft.commit();
+		}
+		addCardFragment.activateButtons();
+	}
 }

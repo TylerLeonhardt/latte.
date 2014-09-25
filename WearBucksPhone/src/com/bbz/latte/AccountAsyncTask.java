@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class AccountAsyncTask extends AsyncTask<Void, Void, Void> {
 
@@ -28,6 +29,15 @@ public class AccountAsyncTask extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected void onPostExecute(Void aVoid) {
 
+		if(!MainActivity.isConnected()){
+			Toast.makeText(MainActivity.context, "No Internet Connection", Toast.LENGTH_SHORT)
+			.show();
+			if (pullToRefreshLayout != null) {
+				pullToRefreshLayout.setRefreshComplete();
+			}
+			return;
+		}
+		
 		JSONObject js = null;
 		String s = null;
 		try {
@@ -52,8 +62,13 @@ public class AccountAsyncTask extends AsyncTask<Void, Void, Void> {
 
 	@Override
 	protected Void doInBackground(Void... params) {
+		
+		if(!MainActivity.isConnected()){
+			return null;
+		}
+		
 		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost httpost = new HttpPost("https://aqueous-reaches-7492.herokuapp.com/account");
+		HttpPost httpost = new HttpPost("https://morning-island-3422.herokuapp.com/account");
 		ResponseHandler<String> responseHandler = new BasicResponseHandler();
 		
 		StringEntity se = null;
@@ -79,4 +94,5 @@ public class AccountAsyncTask extends AsyncTask<Void, Void, Void> {
 
 		return null;
 	}
+	
 }
