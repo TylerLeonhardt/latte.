@@ -22,17 +22,28 @@ public class ValidateCardAsyncTask extends AsyncTask<String, Void, Void> {
 	private String cardnumber;
 	private String pin;
 	private int idx;
+	private Card current;
+	private Card edited;
 
 	
 	public ValidateCardAsyncTask(RequestEventListener callback, DialogInterface d) {
 		this.callback = callback;
 		dialog = d;
-		
+		current = null;
+		edited = null;
 	}
 	
 	public ValidateCardAsyncTask(DialogInterface d, int color) {
 		dialog = d;
 		idx = color;
+		current = null;
+		edited = null;
+	}
+
+	public ValidateCardAsyncTask(DialogInterface d, Card current, Card edited) {
+		dialog = d;
+		this.current = current;
+		this.edited = edited;
 	}
 
 	@Override
@@ -46,9 +57,18 @@ public class ValidateCardAsyncTask extends AsyncTask<String, Void, Void> {
 		
 		
 		if(dialog != null && !invalid){
-			CardManager.saveNewCard(cardnumber, idx, pin);
-			
-			CardManager.addNewCard(cardnumber, idx, pin);
+			if (current == null && edited == null) {
+				CardManager.saveNewCard(cardnumber, idx, pin);
+				CardManager.addNewCard(cardnumber, idx, pin);
+			} else {				
+				int pos = MainActivity.activeCards.indexOf(current);
+				MainActivity.activeCards.set(pos, edited);
+				CardManager.saveCards();
+				MainActivity.adapter.notifyDataSetChanged();
+				
+				for (Card c : MainActivity.activeCards)
+					System.err.println(c.toString());
+			}
 			
 			for(int i = 0; i < MainActivity.activeCards.size(); i++){
 				if(!MainActivity.activeCards.get(i).getPin().equals("nopin"))

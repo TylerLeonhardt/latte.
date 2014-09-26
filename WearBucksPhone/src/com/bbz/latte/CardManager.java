@@ -19,6 +19,8 @@ public class CardManager {
 	 * colorIndex) addNewCard(String cardNumber, int idx) deleteCard(final
 	 * String cardNumber) setDefault(Card card)
 	 */
+	
+	public static Card currentEditing = null;
 
 	// Creates the arraylist of cards from the string stored in System Prefs
 	public static void initializeCards() {
@@ -93,7 +95,7 @@ public class CardManager {
 					.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							for (Card c : MainActivity.activeCards) {
-								if (c.getShortNumber().equals(cardNumber)) {
+								if (c.getCardNumber().equals(cardNumber)) {
 									MainActivity.activeCards.remove(c);
 
 									// make the next card a default
@@ -103,7 +105,6 @@ public class CardManager {
 									}
 
 									break;
-
 								}
 							}
 
@@ -117,6 +118,16 @@ public class CardManager {
 						}
 					}).setIcon(android.R.drawable.ic_dialog_alert).show();
 		}
+	}
+	
+	public static void editCard(Card c) {
+		// Show a popup populated with c's current details
+		// Clicking done will set this card
+		MainActivity.showEditPopup(c);
+		
+		System.err.println("--> updated card:\n\n");
+		for (Card x : MainActivity.activeCards)
+			System.err.println(x.toString());
 	}
 
 	// sets the card passed in as the default card

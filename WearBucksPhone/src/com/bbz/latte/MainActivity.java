@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -381,6 +382,107 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 				}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 
+					}
+				});
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
+	
+	/**
+	 * Shows the popup to edit Card c
+	 */
+	public static void showEditPopup(final Card c) {
+		final Card current = c;
+		
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);		
+		LayoutInflater li = LayoutInflater.from(context);
+		View promptsView = li.inflate(R.layout.add_new_card, null);
+
+		final View cardView = promptsView.findViewById(R.id.add_new_card_generic_popup);
+
+		String cardNumber = c.getCardNumber();
+		
+		// Get all card elements
+		final EditText cardNumber1 = ((EditText) cardView.findViewById(R.id.card_input_1));
+		final EditText cardNumber2 = ((EditText) cardView.findViewById(R.id.card_input_2));
+		final EditText cardNumber3 = ((EditText) cardView.findViewById(R.id.card_input_3));
+		final EditText cardNumber4 = ((EditText) cardView.findViewById(R.id.card_input_4));
+		
+		// Set the edit fields to the current card number
+		if(cardNumber.length() < 16){} else {
+			cardNumber1.setText(cardNumber.substring(0, 4));
+			cardNumber2.setText(cardNumber.substring(4, 8));
+			cardNumber3.setText(cardNumber.substring(8, 12));
+			cardNumber4.setText(cardNumber.substring(12, 16));
+		}
+
+		// Set the chosen color to what's already selected
+		final RadioGroup group = (RadioGroup) cardView.findViewById(R.id.card_color_group);
+		((RadioButton)group.getChildAt(c.getColorPreference())).setChecked(true);
+		
+		// Set the pin to the current pin, if any
+		final EditText pinNumber = (EditText) cardView.findViewById(R.id.pin_enter);
+		pinNumber.setText(c.getPin().equals("nopin") ? "" : c.getPin());
+
+		EditText[] listOfSegments = { cardNumber1, cardNumber2, cardNumber3, cardNumber4 };
+
+		for (int i = 0; i < listOfSegments.length; i++) {
+			setListenerSegment(listOfSegments, i);
+		}
+
+		alertDialogBuilder.setView(promptsView);
+
+		alertDialogBuilder.setCancelable(false)
+				.setNeutralButton("Done", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						String cardSegment1 = cardNumber1.getText().toString();
+						String cardSegment2 = cardNumber2.getText().toString();
+						String cardSegment3 = cardNumber3.getText().toString();
+						String cardSegment4 = cardNumber4.getText().toString();
+
+						String cardNumber = "" + cardSegment1 + cardSegment2 + cardSegment3
+								+ cardSegment4;
+
+						// TODO: make a better validation check
+						if (cardNumber.length() < 16) {
+							showError("Incorrect card", "Please check card number");
+						} else {
+
+							int checkedButton = group.getCheckedRadioButtonId();
+							View radioButton = group.findViewById(checkedButton);
+							
+							String pin = "";
+
+							pin = ((EditText) cardView.findViewById(R.id.pin_enter)).getText().toString();
+							if(pin.equals("")) pin = "nopin";
+							
+							int idx = group.indexOfChild(radioButton);
+
+							if(pin.equals("nopin")){
+								Card edited = new Card(cardNumber, idx, c.isDefault(), pin);
+								
+								int pos = MainActivity.activeCards.indexOf(current);
+								MainActivity.activeCards.set(pos, edited);
+								CardManager.saveCards();
+								MainActivity.adapter.notifyDataSetChanged();
+								
+								for (Card c : activeCards)
+									System.err.println(c.toString());
+								
+								for(int i = 0; i < activeCards.size(); i++){
+									if(!activeCards.get(i).getPin().equals("nopin"))
+										new BalAsyncTask().execute(i);
+								}
+								
+								dialog.dismiss();
+							}else{
+								Card edited = new Card(cardNumber, idx, c.isDefault(), pin);
+								new ValidateCardAsyncTask(dialog, current, edited).execute(cardNumber, pin);
+							}
+							
+							
+						}
 					}
 				});
 

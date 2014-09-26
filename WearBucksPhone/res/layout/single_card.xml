@@ -35,11 +35,11 @@
     <Button
         android:id="@+id/delete_button_single_card"
 	    android:layout_width="35dp" 
-	    android:layout_height="35dp" 
-	    android:background="@drawable/delete"
+	    android:layout_height="25dp" 
+	    android:background="@drawable/options_menu"
 	    android:layout_alignParentRight="true"
 	    android:layout_centerVertical="true"
-	    android:layout_marginLeft="10dp" />
+	    android:layout_marginLeft="5dp" />
     
     <Button 
         android:id="@+id/default_button_single_card"
