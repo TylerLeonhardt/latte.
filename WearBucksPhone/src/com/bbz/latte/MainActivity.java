@@ -397,7 +397,7 @@ public class MainActivity extends ListActivity implements OnRefreshListener, Req
 		
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);		
 		LayoutInflater li = LayoutInflater.from(context);
-		View promptsView = li.inflate(R.layout.add_new_card, null);
+		View promptsView = li.inflate(R.layout.edit_card, null);
 
 		final View cardView = promptsView.findViewById(R.id.add_new_card_generic_popup);
 

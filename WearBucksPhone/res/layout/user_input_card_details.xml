@@ -1,20 +1,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
-
-    <TextView
-        android:id="@+id/addcard_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="@string/add_card_title"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp" >
 
     <RelativeLayout
         android:id="@+id/card_input_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/addcard_title"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp" >
 
@@ -94,7 +86,7 @@
         android:layout_marginTop="25dp"
         android:layout_marginLeft="15dp"
         android:layout_alignParentLeft="true"
-        android:text="Optionally, add your card's pin for the exact balance:" />
+        android:text="@string/pin_option_text" />
     
     <EditText 
         android:id="@+id/pin_enter"

@@ -25,6 +25,9 @@
     <string name="add_card_seperator">-</string>
     <string name="add_card_custom_color">Custom color:</string>
     <string name="add_card_add_button">Add Card</string>
+    <string name="pin_option_text">Pin for card balance (optional):</string>
+    
+    <string name="edit_card_title">Edit Starbucks Card</string>
     
     <!-- Summary Fragment -->
     <string name="summary_review">Review your account information then click finish to go to the app!</string>
